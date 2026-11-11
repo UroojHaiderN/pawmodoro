@@ -6,7 +6,7 @@ A cute, hand-drawn pomodoro timer with a cat buddy.
 - A task list, and your buddy cheers when you check something off
 - Little reminders to sip water and stretch, at random times while the timer runs
 - **Float**: in Chrome or Edge on a computer, the float button pops the timer into a small window that stays on top of every other window and app
-- Trendy colors (Strawberry milk, Matcha, Strawberry matcha, Ube, Pistachio, Cherry cola and frosted Glass), plus a mini mode
+- Two colors: Matcha by day and Sushi (a maki roll) at night, plus a mini mode
 - Installable as an app, and works offline once it has loaded
 
 ## Run it locally

@@ -5,12 +5,9 @@
   const NS = 'http://www.w3.org/2000/svg';
   const KEY = 'bunodoro:v1'; // kept from the first version so saved tasks carry over
   const LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
-  const LOOKS = ['auto', 'strawberry', 'matcha', 'strawmatcha', 'ube', 'pistachio', 'cherry', 'glass'];
-  const OLD_LOOKS = { paper: 'strawberry', night: 'cherry', midnight: 'cherry', blueberry: 'auto', lavender: 'ube', peach: 'auto' }; // earlier color names
-  const LOOK_SAY = {
-    auto: 'matching your system', strawberry: 'strawberry milk!', matcha: 'matcha latte time', strawmatcha: 'strawberry matcha!',
-    ube: 'ube latte, yum', pistachio: 'pistachio dream', cherry: 'cherry cola night', glass: 'ooh, glassy',
-  };
+  const LOOKS = ['auto', 'matcha', 'sushi'];
+  const OLD_LOOKS = { paper: 'auto', night: 'auto', midnight: 'auto', strawberry: 'auto', strawmatcha: 'auto', ube: 'auto', pistachio: 'auto', cherry: 'auto', glass: 'auto', blueberry: 'auto', lavender: 'auto', peach: 'auto' }; // earlier color names
+  const LOOK_SAY = { auto: 'matching your system', matcha: 'matcha latte time', sushi: 'sushi night!' };
   const STEP = { focus: { min: 1, max: 90, big: 5 }, short: { min: 1, max: 30, big: 1 }, long: { min: 5, max: 60, big: 5 }, every: { min: 2, max: 8, big: 1 } };
   const NUDGE_RANGE = { water: [30, 60], stretch: [45, 75] }; // minutes of timer time, picked at random each time
   const SNOOZE = 10 * 60000;

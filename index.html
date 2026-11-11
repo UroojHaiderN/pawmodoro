@@ -413,7 +413,7 @@ a{color:inherit}
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>a cat who naps, sips and cheers you on</li>
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>little reminders to sip water and stretch</li>
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>floats on top, lives in your menu bar</li>
-      <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>trendy colors like matcha, ube and pistachio</li>
+      <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>matcha by day, sushi at night</li>
     </ul>
     <hr class="rule">
 
@@ -434,14 +434,9 @@ a{color:inherit}
   </main>
 
   <div class="pickers swatches" role="radiogroup" aria-label="Colors">
-    <button type="button" class="sw" role="radio" data-look="auto" title="Strawberry milk by day, Cherry cola at night" style="--sw-paper:linear-gradient(135deg,#FFE3EC 50%,#3E1520 50%);--sw-ink:#C22A5E"><span class="sw-dot"></span>auto</button>
-    <button type="button" class="sw" role="radio" data-look="strawberry" style="--sw-paper:#FFE3EC;--sw-ink:#C22A5E"><span class="sw-dot"></span>strawberry milk</button>
+    <button type="button" class="sw" role="radio" data-look="auto" title="Matcha by day, Sushi at night" style="--sw-paper:linear-gradient(135deg,#E6F3DA 50%,#1F2B25 50%);--sw-ink:#366E3A"><span class="sw-dot"></span>auto</button>
     <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span>matcha</button>
-    <button type="button" class="sw" role="radio" data-look="strawmatcha" style="--sw-paper:linear-gradient(180deg,#FFD6E3 50%,#BFE3B0 50%);--sw-ink:#346C38"><span class="sw-dot"></span>strawberry matcha</button>
-    <button type="button" class="sw" role="radio" data-look="ube" style="--sw-paper:#EEE3FA;--sw-ink:#5C2D91"><span class="sw-dot"></span>ube</button>
-    <button type="button" class="sw" role="radio" data-look="pistachio" style="--sw-paper:#EEF2D6;--sw-ink:#5C3A26"><span class="sw-dot"></span>pistachio</button>
-    <button type="button" class="sw" role="radio" data-look="cherry" style="--sw-paper:#3E1520;--sw-ink:#FFCDD6"><span class="sw-dot"></span>cherry cola</button>
-    <button type="button" class="sw" role="radio" data-look="glass" style="--sw-paper:linear-gradient(135deg,#FF9DC0,#9A86C9 55%,#8FD8C8);--sw-ink:#FFFFFF"><span class="sw-dot"></span>glass</button>
+    <button type="button" class="sw" role="radio" data-look="sushi" style="--sw-paper:radial-gradient(circle,#FF8A65 0 34%,#FFF4E6 35% 100%);--sw-ink:#1F2B25"><span class="sw-dot"></span>sushi</button>
   </div>
 
   <footer class="credit">
@@ -456,8 +451,8 @@ a{color:inherit}
   const COFFEE_URL = 'https://buymeacoffee.com/uroojhaidek';
 
   const KEY = 'bunodoro:v1'; // the timer app's saved settings, so both pages share your colors
-  const LOOKS = ['auto', 'strawberry', 'matcha', 'strawmatcha', 'ube', 'pistachio', 'cherry', 'glass'];
-  const OLD = { paper: 'strawberry', night: 'cherry', midnight: 'cherry', blueberry: 'auto', lavender: 'ube', peach: 'auto' };
+  const LOOKS = ['auto', 'matcha', 'sushi'];
+  const OLD = { paper: 'auto', night: 'auto', midnight: 'auto', strawberry: 'auto', strawmatcha: 'auto', ube: 'auto', pistachio: 'auto', cherry: 'auto', glass: 'auto', blueberry: 'auto', lavender: 'auto', peach: 'auto' };
   const root = document.documentElement;
   const read = () => { try { return JSON.parse(localStorage.getItem(KEY) || 'null'); } catch (e) { return null; } };
 

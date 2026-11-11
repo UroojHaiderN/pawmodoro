@@ -229,7 +229,7 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 .seg button[aria-checked="true"]{background:var(--btn-bg);color:var(--btn-fg);text-shadow:none}
 
 /* color swatches */
-.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 4px}
+.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 4px}
 .sw{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:3px 0;border-radius:12px;font-size:.62rem;line-height:1.15;text-align:center;color:var(--ink-soft)}
 .sw-dot{position:relative;width:30px;height:30px;border-radius:50%;background:var(--sw-paper);border:2px solid var(--sw-ink);transition:transform .15s}
 .sw-dot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sw-ink)}
@@ -545,14 +545,9 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
         </div>
         <div class="setting stack"><span>Colors</span>
           <div class="swatches" id="seg" role="radiogroup" aria-label="Colors">
-            <button type="button" class="sw" role="radio" data-look="auto" title="Strawberry milk by day, Cherry cola at night" style="--sw-paper:linear-gradient(135deg,#FFE3EC 50%,#3E1520 50%);--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">auto</span></button>
-            <button type="button" class="sw" role="radio" data-look="strawberry" style="--sw-paper:#FFE3EC;--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">strawberry milk</span></button>
+            <button type="button" class="sw" role="radio" data-look="auto" title="Matcha by day, Sushi at night" style="--sw-paper:linear-gradient(135deg,#E6F3DA 50%,#1F2B25 50%);--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">auto</span></button>
             <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">matcha</span></button>
-            <button type="button" class="sw" role="radio" data-look="strawmatcha" style="--sw-paper:linear-gradient(180deg,#FFD6E3 50%,#BFE3B0 50%);--sw-ink:#346C38"><span class="sw-dot"></span><span class="sw-name">strawberry matcha</span></button>
-            <button type="button" class="sw" role="radio" data-look="ube" style="--sw-paper:#EEE3FA;--sw-ink:#5C2D91"><span class="sw-dot"></span><span class="sw-name">ube</span></button>
-            <button type="button" class="sw" role="radio" data-look="pistachio" style="--sw-paper:#EEF2D6;--sw-ink:#5C3A26"><span class="sw-dot"></span><span class="sw-name">pistachio</span></button>
-            <button type="button" class="sw" role="radio" data-look="cherry" style="--sw-paper:#3E1520;--sw-ink:#FFCDD6"><span class="sw-dot"></span><span class="sw-name">cherry cola</span></button>
-            <button type="button" class="sw" role="radio" data-look="glass" style="--sw-paper:linear-gradient(135deg,#FF9DC0,#9A86C9 55%,#8FD8C8);--sw-ink:#FFFFFF"><span class="sw-dot"></span><span class="sw-name">glass</span></button>
+            <button type="button" class="sw" role="radio" data-look="sushi" style="--sw-paper:radial-gradient(circle,#FF8A65 0 34%,#FFF4E6 35% 100%);--sw-ink:#1F2B25"><span class="sw-dot"></span><span class="sw-name">sushi</span></button>
           </div>
         </div>
         <button class="go" id="settings-done" type="button">Done</button>
