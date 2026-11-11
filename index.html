@@ -320,6 +320,15 @@ body.pip{min-height:100%;background:var(--desk)}
 body.pip .stage{min-height:100vh;display:grid;place-items:center;padding:16px 10px 10px}
 body.pip.is-mini .stage{padding:6px}
 
+/* inside the Mac app: only the card shows, on a see-through window */
+html.in-app,html.in-app body{background:transparent!important;height:auto;min-height:0;overflow:hidden}
+.in-app .desk{display:block;min-height:0;padding:0;background:none;overflow:visible}
+.in-app .topbar,.in-app .hint,.in-app .doodles,.in-app .floating-note{display:none!important}
+.in-app .stage{display:inline-block;width:auto;padding:20px 18px 26px}
+.in-app .card{width:304px}
+.in-app .tape,.in-app .bunny-wrap,.in-app .time,.in-app .phase-row,.in-app .mini .bunny,.in-app .mini-time{cursor:grab}
+html.in-app[data-look="glass"]{--paper:rgba(70,28,78,.78)}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -597,6 +606,7 @@ body.pip.is-mini .stage{padding:6px}
         <button class="icon" id="look" type="button" aria-label="Theme" title="Theme"><svg aria-hidden="true"><use href="#i-auto"/></svg></button>
         <button class="icon" id="mini-btn" type="button" aria-label="Shrink to mini timer" title="Mini mode"><svg aria-hidden="true"><use href="#i-shrink"/></svg></button>
         <button class="icon" id="settings-btn" type="button" aria-label="Settings" aria-pressed="false" title="Settings"><svg aria-hidden="true"><use href="#i-tune"/></svg></button>
+        <button class="icon" id="hide-btn" type="button" aria-label="Hide. Click the paw in the menu bar to bring it back" title="Hide" hidden><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
       </footer>
     </section>
 

@@ -82,6 +82,22 @@
   const el = {};
   function rollToday() { if (S.today.date !== todayKey()) S.today = freshToday(); }
 
+  /* ---------- Mac app bridge (only present inside the Pawmodoro Mac app) ---------- */
+  const bridge = window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.pawmodoro;
+  const inApp = !!bridge;
+  function post(msg) { if (!bridge) return; try { bridge.postMessage(msg); } catch (e) {} }
+  function sendLayout() {
+    if (!inApp) return;
+    const r = el.stage.getBoundingClientRect();
+    post({ type: 'size', w: Math.ceil(r.width), h: Math.ceil(r.height) });
+    const grab = S.mini ? '#mini-bun, #mini-time' : '.tape, .bunny-wrap, .time, .phase-row';
+    const rects = [...document.querySelectorAll(grab)]
+      .map((n) => n.getBoundingClientRect())
+      .filter((b) => b.width > 0 && b.height > 0)
+      .map((b) => ({ x: b.left, y: b.top, w: b.width, h: b.height }));
+    post({ type: 'drag', rects });
+  }
+
   /* ---------- sound ---------- */
   let ac = null;
   function audio() {
@@ -253,6 +269,7 @@
       el.time.setAttribute('aria-label', label); el.miniTime.setAttribute('aria-label', label);
       document.title = S.timer.running ? `${str} · ${LABEL[S.timer.phase]}` : 'Pawmodoro';
       if (pipWin) pipWin.document.title = document.title;
+      post({ type: 'tick', text: str, running: S.timer.running });
     }
     const t = S.timer;
     if (t.phase === 'focus') {
@@ -349,6 +366,7 @@
     const d = S.today;
     el.today.textContent = `Today: ${plural(d.count, 'pomodoro', 'pomodoros')} · ${d.minutes} min focused · ${plural(d.water, 'water break', 'water breaks')} · ${plural(d.stretch, 'stretch', 'stretches')}`;
     renderDots(); renderSettings(); paintTime(true); updateBunny();
+    if (inApp) requestAnimationFrame(sendLayout);
   }
 
   /* ---------- tasks ---------- */
@@ -559,6 +577,15 @@
     document.addEventListener('keydown', onKey);
     document.addEventListener('visibilitychange', tick);
     window.addEventListener('pagehide', saveNow);
+
+    if (inApp) {
+      const hideBtn = $('#hide-btn');
+      hideBtn.hidden = false;
+      hideBtn.addEventListener('click', () => post({ type: 'hide' }));
+      el.notify.closest('label').hidden = true; // the floating card is always on screen instead
+      if ('ResizeObserver' in window) new ResizeObserver(() => sendLayout()).observe(el.stage);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(sendLayout);
+    }
   }
 
   let lastTick = Date.now();
