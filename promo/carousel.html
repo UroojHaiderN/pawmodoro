@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=540">
+<title>Pawmodoro carousel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap">
+<style>
+  /* Layout: a calm, minimal slide. Big title at the top, one focused picture below, lots of room. */
+  :root{--bg:#F3F7EC;--ink:#2E5631;--soft:#5E7C60;--sushi:#F4DCD3}
+  html,body{margin:0;width:540px;height:960px;overflow:hidden;background:var(--bg);font-family:"M PLUS Rounded 1c",system-ui,sans-serif;color:var(--ink)}
+  iframe{position:absolute;border:0;background:transparent}
+  .text{position:absolute;top:104px;left:36px;right:36px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+  .title{margin:0;font:700 52px/1.02 Gaegu,"Chalkboard SE",cursive;text-wrap:balance}
+  .sub{margin:0;font-size:17px;font-weight:500;color:var(--soft);text-wrap:balance;max-width:34ch}
+  .visual{left:0;top:290px;width:540px;height:670px}
+  .swipe{position:absolute;bottom:20px;right:18px;font:700 24px/1 Gaegu,cursive;color:var(--soft)}
+  /* matcha or sushi: two halves */
+  .half{position:absolute;top:300px;bottom:190px;left:24px;width:240px;border-radius:28px;background:#E4EFD8}
+  .half.r{left:276px;background:var(--sushi)}
+  .half-frame{top:300px;width:240px;height:500px}
+  .label{position:absolute;top:690px;width:240px;text-align:center;font:700 32px/1 Gaegu,cursive}
+  /* floats on top: a soft wallpaper with a menu bar and the pill */
+  .screen{position:absolute;left:40px;top:330px;width:460px;height:420px;border-radius:28px;overflow:hidden;
+    background:linear-gradient(160deg,#D6E7FF,#F8DCE7 60%,#E4F2D8);box-shadow:0 22px 44px -22px rgba(46,86,49,.45)}
+  .menubar{position:absolute;inset:0 0 auto;height:30px;display:flex;align-items:center;justify-content:flex-end;gap:14px;padding:0 16px;
+    background:rgba(255,255,255,.75);font-size:13px;font-weight:700;color:#2B2B35;font-variant-numeric:tabular-nums}
+  .menubar .paw{display:flex;align-items:center;gap:5px}
+  .menubar svg{width:15px;height:15px}
+  .pill{left:0;top:120px;width:460px;height:200px}
+  /* last slide */
+  .end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:0 40px}
+  .end .cat{width:150px;height:150px}
+  .end .word{margin:0;font:700 66px/1 Gaegu,cursive}
+  .end .free{margin:-6px 0 0;font-size:19px;font-weight:500;color:var(--soft)}
+  .end .btn{margin-top:10px;padding:16px 34px;border-radius:999px;background:var(--ink);color:#F5FBF0;font:700 30px/1 Gaegu,cursive}
+  .end .ask{margin:8px 0 0;font:700 30px/1.15 Gaegu,cursive;text-wrap:balance}
+  .end .url{margin:0;font-size:15px;color:var(--soft)}
+</style>
+</head>
+<body>
+<script>
+  const n = Number(new URLSearchParams(location.search).get('n') || 1);
+  const d = new Date(), today = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+  const state = (extra = {}) => JSON.stringify(Object.assign({
+    settings: { focus: 25, short: 5, long: 15, every: 4, auto: false, notify: false },
+    tasks: [
+      { id: 'a', text: 'read chapter 4', done: false },
+      { id: 'b', text: 'email my professor', done: false },
+      { id: 'c', text: 'finish design homework', done: false },
+      { id: 'd', text: 'make coffee', done: true },
+    ],
+    currentId: 'a', buddy: 'cat', look: 'matcha', vol: 60, muted: true, mini: false, showDone: false,
+    timer: { phase: 'focus', cycle: 1, total: 1500000, remaining: 1500000, running: false, endAt: 0, fresh: true },
+    nudges: { water: 0, stretch: 0, waterDue: 9e9, stretchDue: 9e9 },
+    today: { date: today, count: 1, minutes: 25, water: 2, stretch: 1 },
+  }, extra));
+  const doneTasks = {
+    tasks: [
+      { id: 'a', text: 'read chapter 4', done: true },
+      { id: 'd', text: 'make coffee', done: true },
+      { id: 'b', text: 'email my professor', done: false },
+      { id: 'c', text: 'finish design homework', done: false },
+    ],
+    currentId: 'b', showDone: true,
+  };
+  const running = (minsLeft) => ({ phase: 'focus', cycle: 1, total: 1500000, remaining: 1500000, running: true, endAt: Date.now() + minsLeft * 60000 + 900, fresh: false });
+  const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  // Show just the part of the timer card each slide is about, on a clear background.
+  const BASE = `.topbar,.hint,.doodles{display:none!important}
+    html,body,.desk{background:transparent!important}
+    .desk{padding:0!important;gap:0!important;min-height:100vh!important}
+    .stage{min-height:100vh;padding:0}
+    .bubble{font-size:1.05rem}`;
+  const HIDE = {
+    tasks: '.tasks,#empty,.done-row,#done-list,.add{display:none!important}',
+    time: '.time,.phase-row{display:none!important}',
+    controls: '.controls{display:none!important}',
+    bar: '.bar{display:none!important}',
+  };
+  function text(title, sub) {
+    document.body.insertAdjacentHTML('beforeend', `<div class="text"><h1 class="title">${title}</h1>${sub ? `<p class="sub">${sub}</p>` : ''}</div>`);
+  }
+  async function app(cls, css, parent = document.body) {
+    const f = document.createElement('iframe'); f.src = '../app/?reel'; f.className = cls; parent.append(f);
+    await new Promise((ok) => f.addEventListener('load', ok, { once: true }));
+    await f.contentWindow.document.fonts.ready;
+    const st = f.contentWindow.document.createElement('style'); st.textContent = BASE + css; f.contentWindow.document.head.append(st);
+    return f;
+  }
+  const catHead = `<svg class="cat" viewBox="32 14 56 60"><g fill="#E6F3DA" stroke="#2E5631" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M39.7,41.9 C38.5,34 38,26 39,20.5 C39.5,18 41.5,17.8 43,19.2 C46.5,23 50,28 52.5,33.8"/><path d="M67.5,33.8 C70,28 73.5,23 77,19.2 C78.5,17.8 80.5,18 81,20.5 C82,26 81.5,34 80.3,41.9"/><path d="M36,54 C36,40 47,33 60,33 C73,33 84,40 84,54 C84,66 73,72 60,72 C47,72 36,66 36,54 Z"/></g><g fill="#2E5631"><circle cx="51" cy="52" r="2.6"/><circle cx="69" cy="52" r="2.6"/><path d="M57.8,56 L62.2,56 L60,58.6 Z"/></g><ellipse cx="45.5" cy="58" rx="3.6" ry="2.1" fill="#F7A9A8"/><ellipse cx="74.5" cy="58" rx="3.6" ry="2.1" fill="#F7A9A8"/></svg>`;
+  const pawIcon = '<svg viewBox="0 0 24 24"><g fill="currentColor"><ellipse cx="12" cy="16" rx="5.4" ry="4.6"/><circle cx="5.2" cy="10.2" r="2.4"/><circle cx="9.2" cy="6" r="2.5"/><circle cx="14.8" cy="6" r="2.5"/><circle cx="18.8" cy="10.2" r="2.4"/></g></svg>';
+
+  window.slideReady = (async () => {
+    await document.fonts.ready;
+    if (n === 1) {
+      localStorage.setItem('bunodoro:v1', state(doneTasks));
+      text('meet pawmodoro 🐾', 'a tiny focus timer with a cat who believes in you');
+      await app('visual', '.card{zoom:1.02}');
+      document.body.insertAdjacentHTML('beforeend', '<div class="swipe">swipe →</div>');
+      await wait(900);
+    } else if (n === 2) {
+      localStorage.setItem('bunodoro:v1', state(doneTasks));
+      text('your cat studies with you 📖', 'press start, and you two focus together');
+      const f = await app('visual', '.card{zoom:1.02}');
+      await wait(4600); f.contentWindow.document.querySelector('#go').click(); await wait(2600);
+    } else if (n === 3) {
+      localStorage.setItem('bunodoro:v1', state({ timer: running(18) }));
+      text('check off a task, get a cheer ✨', 'your little to-do list lives on the timer');
+      const f = await app('visual', '.card{zoom:1.3}' + HIDE.time + HIDE.controls + HIDE.bar + '.done-row,.add{display:none!important}');
+      await wait(4600); f.contentWindow.document.querySelector('#tasks .check').click(); await wait(1500);
+    } else if (n === 4) {
+      localStorage.setItem('bunodoro:v1', state({ timer: running(12) }));
+      text('little water & stretch breaks 💧', 'they pop up at random while you focus');
+      const f = await app('visual', '.card{zoom:1.3}' + HIDE.tasks + HIDE.time + HIDE.controls + HIDE.bar);
+      await wait(4600); f.contentWindow.pawReel.nudge('water'); await wait(1300);
+    } else if (n === 5) {
+      document.body.insertAdjacentHTML('beforeend', '<div class="half"></div><div class="half r"></div>');
+      text('matcha or sushi? 🍵🍣', 'pick your cozy look');
+      const css = '.card{width:280px;zoom:.8}' + HIDE.tasks + HIDE.controls + HIDE.bar + '.bubble{display:none!important}';
+      localStorage.setItem('bunodoro:v1', state());
+      const left = await app('half-frame', css); left.style.left = '24px';
+      localStorage.setItem('bunodoro:v1', state({ look: 'sushi' }));
+      const right = await app('half-frame', css + 'html,body,.desk{background:transparent!important}'); right.style.left = '276px';
+      document.body.insertAdjacentHTML('beforeend', '<div class="label" style="left:24px">matcha</div><div class="label" style="left:276px;color:#2B2B35">sushi</div>');
+      await wait(4600);
+    } else if (n === 6) {
+      localStorage.setItem('bunodoro:v1', state({ mini: true, timer: running(14) }));
+      text('it floats on top of your mac 🫧', 'a tiny pill above every app, with a paw in your menu bar');
+      document.body.insertAdjacentHTML('beforeend', `<div class="screen"><div class="menubar"><span class="paw">${pawIcon}<span id="mb">14:00</span></span><span>Tue 2:41</span></div></div>`);
+      const screen = document.querySelector('.screen');
+      const f = await app('pill', '.mini{zoom:1.55}.stage{display:grid;place-items:center}', screen);
+      await wait(1200);
+      document.getElementById('mb').textContent = f.contentWindow.document.querySelector('#mini-time').textContent;
+    } else if (n === 7) {
+      document.body.insertAdjacentHTML('beforeend', `<div class="end">${catHead}<h1 class="word">pawmodoro</h1><p class="free">free for mac</p>
+        <div class="btn">download for mac</div><p class="ask">comment MATCHA or SUSHI and i’ll send you the link 🍵🍣</p><p class="url">pawmodoro-app.vercel.app</p></div>`);
+      await wait(300);
+    }
+    return true;
+  })();
+</script>
+</body>
+</html>

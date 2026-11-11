@@ -62,6 +62,7 @@ const frames = Math.round(totalMs / 1000 * FPS);
 await send('Emulation.setVirtualTimePolicy', { policy: 'pause' });
 await evaluate('window.startReel(), true');
 const t0 = Date.now();
+let doneAt = 0; // the page sets window.reelDone when its tour finishes; stop half a second after that
 for (let f = 0; f < frames; f++) {
   const expired = once('Emulation.virtualTimeBudgetExpired');
   await send('Emulation.setVirtualTimePolicy', { policy: 'advance', budget: 1000 / FPS });
@@ -69,6 +70,8 @@ for (let f = 0; f < frames; f++) {
   const { data } = await send('Page.captureScreenshot', { format: 'jpeg', quality: 94 });
   writeFileSync(join(OUT, String(f).padStart(4, '0') + '.jpg'), Buffer.from(data, 'base64'));
   if (f % 90 === 0) console.log(`frame ${f}/${frames}  (${Math.round((Date.now() - t0) / 1000)}s)`);
+  if (!doneAt && f % 10 === 0 && await evaluate('window.reelDone === true')) doneAt = f;
+  if (doneAt && f >= doneAt + Math.round(FPS / 2)) { console.log(`tour finished at ${(f / FPS).toFixed(1)}s`); break; }
 }
 ws.close();
 cleanup();
