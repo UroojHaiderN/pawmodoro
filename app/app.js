@@ -455,8 +455,12 @@
   }
 
   /* ---------- install as an app ---------- */
+  // Macs get the real Mac app instead; other computers can install the web app from Chrome or Edge.
+  const ua = navigator.userAgentData;
+  const onMac = ua && ua.platform ? ua.platform === 'macOS'
+    : /Mac/.test(navigator.platform || navigator.userAgent) && navigator.maxTouchPoints < 2; // iPads also say "Mac"
   let installEvt = null;
-  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; if (el.install) el.install.hidden = false; });
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installEvt = e; if (el.install) el.install.hidden = onMac; });
   window.addEventListener('appinstalled', () => { installEvt = null; if (el.install) { el.install.hidden = true; say('installed! find me in your apps', 3000); } });
 
   /* ---------- wiring ---------- */
@@ -544,7 +548,8 @@
     el.miniFloat.addEventListener('click', toggleFloat);
     $('#unfloat').addEventListener('click', () => { if (pipWin) pipWin.close(); });
 
-    el.install.hidden = !installEvt;
+    el.install.hidden = onMac || !installEvt;
+    $('#mac-link').hidden = !onMac;
     el.install.addEventListener('click', async () => {
       if (!installEvt) return;
       installEvt.prompt();

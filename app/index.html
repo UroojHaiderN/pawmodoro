@@ -245,7 +245,7 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 
 /* install button */
 .top-right{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
-.install{display:flex;align-items:center;gap:6px;border:1.6px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px 4px 9px;font-size:.78rem}
+.install{display:flex;align-items:center;gap:6px;border:1.6px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px 4px 9px;font-size:.78rem;text-decoration:none;cursor:pointer}
 .install svg{width:15px;height:15px}
 .install:hover{background:var(--paper-hi)}
 
@@ -362,7 +362,7 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
     <h1 class="brand"><span class="wordmark">pawmodoro<svg class="wm-paw" aria-hidden="true"><use href="#i-paw"/></svg></span><span class="tag" id="tag">a tiny focus timer with a cat buddy</span></h1>
     <div class="top-right">
       <p class="today" id="today">Today: 0 pomodoros · 0 min focused</p>
-      <a class="install" id="mac-link" href="../"><svg aria-hidden="true"><use href="#i-paw"/></svg>Get the Mac app</a>
+      <a class="install" id="mac-link" href="../" target="_blank" rel="noopener" hidden><svg aria-hidden="true"><use href="#i-paw"/></svg>Get the Mac app</a>
       <button class="install" id="install" type="button" hidden><svg aria-hidden="true"><use href="#i-install"/></svg>Install app</button>
     </div>
   </header>
