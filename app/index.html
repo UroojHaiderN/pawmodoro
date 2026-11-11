@@ -229,10 +229,10 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 .seg button[aria-checked="true"]{background:var(--btn-bg);color:var(--btn-fg);text-shadow:none}
 
 /* color swatches */
-.swatches{display:grid;grid-template-columns:repeat(3,1fr);gap:10px 4px}
+.swatches{display:flex;gap:18px}
 .sw{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:3px 0;border-radius:12px;font-size:.62rem;line-height:1.15;text-align:center;color:var(--ink-soft)}
 .sw-dot{position:relative;width:30px;height:30px;border-radius:50%;background:var(--sw-paper);border:2px solid var(--sw-ink);transition:transform .15s}
-.sw-dot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sw-ink)}
+.sw-dot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sw-dot,var(--sw-ink))}
 .sw:hover .sw-dot{transform:scale(1.08) rotate(-6deg)}
 .sw[aria-checked="true"]{color:var(--ink);font-weight:700}
 .sw[aria-checked="true"] .sw-dot{box-shadow:0 0 0 2.5px var(--paper-hi),0 0 0 4.5px var(--ink)}
@@ -332,6 +332,13 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
   <symbol id="i-dock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M15 9 L9.5 14.5 M9.5 10 V14.5 H14"/></g></symbol>
   <symbol id="i-later" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 9.5 V13 L14.5 14.5 M5 5 L7.5 3 M19 5 L16.5 3"/></g></symbol>
   <symbol id="i-install" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 V14 M8 10.5 L12 14.5 L16 10.5"/><path d="M5 15.5 V18.5 H19 V15.5"/></g></symbol>
+  <!-- sushi doodles, shown on the desk in the Sushi colors -->
+  <symbol id="s-nigiri" viewBox="0 0 48 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#FFFFFF" d="M6 27 C6 19 14 16 24 16 C34 16 42 19 42 27 C42 34 34 36 24 36 C14 36 6 34 6 27 Z"/><path fill="#F59A7E" d="M3 18 C8 9 22 6 34 8 C42 9 46 13 44 17 C40 21 28 22 16 22 C9 22 4 21 3 18 Z"/><path fill="none" stroke="#F6C453" stroke-width="2.2" d="M8 21.5 C16 23.5 30 23.5 40 20"/><path fill="none" stroke="#FFE9E0" stroke-width="1.8" d="M14 10 C16 14 16 18 14 21 M22 8 C24 12 24 17 22 21 M30 8 C32 12 32 16 30 20"/><circle cx="19" cy="28" r="1.7" fill="#2B2B35" stroke="none"/><circle cx="29" cy="28" r="1.7" fill="#2B2B35" stroke="none"/><path fill="none" stroke="#2B2B35" stroke-width="1.4" d="M22 30.4 q2 2.2 4 0"/><ellipse cx="16.4" cy="30.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="31.6" cy="30.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
+  <symbol id="s-maki" viewBox="0 0 40 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="20" r="16" fill="#2B2B35"/><circle cx="20" cy="20" r="12" fill="#FFFFFF" stroke-width="1.4"/><path fill="#F59A7E" d="M14.5 17 q0 -2.5 2.5 -2.5 h5 q2.5 0 2.5 2.5 v6 q0 2.5 -2.5 2.5 h-5 q-2.5 0 -2.5 -2.5 z"/><path fill="#9CCB6B" stroke-width="1.2" d="M23 14 h3.5 v4.5 h-3.5 z"/><path fill="none" stroke-width="1.1" d="M11 22 q1.5 -1.5 3 0 M26 28 q1.5 -1.5 3 0 M27 22 q1.5 -1.5 3 0"/></g></symbol>
+  <symbol id="s-onigiri" viewBox="0 0 40 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#FFFFFF" d="M20 5 C24 5 35 25 35 30 C35 35 30 36 20 36 C10 36 5 35 5 30 C5 25 16 5 20 5 Z"/><path fill="#2B2B35" d="M13 26 L27 26 L27 36 L13 36 Z"/><circle cx="16" cy="18" r="1.7" fill="#2B2B35" stroke="none"/><circle cx="24" cy="18" r="1.7" fill="#2B2B35" stroke="none"/><path fill="none" stroke="#2B2B35" stroke-width="1.4" d="M18 20.4 q2 2.2 4 0"/><ellipse cx="13.4" cy="20.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="26.6" cy="20.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
+  <symbol id="s-gunkan" viewBox="0 0 40 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#2B2B35" d="M7 15 h26 v18 q0 3 -3 3 h-20 q-3 0 -3 -3 z"/><g fill="#FF8A3D" stroke-width="1.2"><circle cx="12" cy="14" r="3.2"/><circle cx="18.5" cy="12" r="3.2"/><circle cx="25" cy="12" r="3.2"/><circle cx="31" cy="14" r="3.2"/><circle cx="15.5" cy="8.5" r="3.2"/><circle cx="22" cy="7" r="3.2"/><circle cx="28" cy="9" r="3.2"/></g><circle cx="15.5" cy="25" r="1.7" fill="#FFFFFF" stroke="none"/><circle cx="24.5" cy="25" r="1.7" fill="#FFFFFF" stroke="none"/><path fill="none" stroke="#FFFFFF" stroke-width="1.4" d="M18 27.4 q2 2.2 4 0"/><ellipse cx="12.9" cy="27.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="27.1" cy="27.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
+  <symbol id="s-chopsticks" viewBox="0 0 48 22"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#E3B98C" d="M3 6 L45 3 L45.5 6.5 L3 8.5 Z"/><path fill="#E3B98C" d="M3 13 L45 14 L45 17.5 L3 15.5 Z"/><path fill="none" stroke-width="1.4" d="M36 3.6 L36.3 7 M36 14 L36 17.2"/></g></symbol>
+  <symbol id="s-bowl" viewBox="0 0 44 38"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#2B2B35" d="M4 13 C4 27 12 33 22 33 C32 33 40 27 40 13 Z"/><ellipse cx="22" cy="13" rx="18" ry="4.5" fill="#F59A7E"/><path fill="#2B2B35" d="M15 32 h14 v3.5 h-14 z"/><circle cx="17" cy="22" r="1.7" fill="#FFFFFF" stroke="none"/><circle cx="27" cy="22" r="1.7" fill="#FFFFFF" stroke="none"/><path fill="none" stroke="#FFFFFF" stroke-width="1.4" d="M20 24.4 q2 2.2 4 0"/><ellipse cx="14.4" cy="24.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="29.6" cy="24.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
   <!-- desk doodles -->
   <symbol id="d-star" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M20 5 L24 15 L35 16 L26.5 23 L29.5 34 L20 28 L10.5 34 L13.5 23 L5 16 L16 15 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
   <symbol id="d-heart" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M20 33 C8 25 4 18 7 12 C10 6 17 7 20 13 C23 7 30 6 33 12 C36 18 32 25 20 33 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
@@ -345,6 +352,13 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
 
 <div class="desk">
   <div class="doodles" aria-hidden="true">
+    <svg class="dd dd-sushi" style="top:9%;left:6%;--s:102px;--r:-8deg" viewBox="0 0 48 40"><use href="#s-nigiri"/></svg>
+    <svg class="dd dd-sushi" style="top:12%;right:8%;--s:81px;--r:8deg" viewBox="0 0 40 40"><use href="#s-maki"/></svg>
+    <svg class="dd dd-sushi" style="top:48%;left:4%;--s:81px;--r:-6deg" viewBox="0 0 40 40"><use href="#s-onigiri"/></svg>
+    <svg class="dd dd-sushi" style="top:38%;right:12%;--s:81px;--r:-8deg" viewBox="0 0 40 40"><use href="#s-gunkan"/></svg>
+    <svg class="dd dd-sushi" style="bottom:10%;right:6%;--s:90px;--r:6deg" viewBox="0 0 44 38"><use href="#s-bowl"/></svg>
+    <svg class="dd dd-sushi" style="bottom:12%;left:12%;--s:122px;--r:-18deg" viewBox="0 0 48 22"><use href="#s-chopsticks"/></svg>
+    <svg class="dd dd-sushi" style="top:27%;left:17%;--s:58px" viewBox="0 0 40 40"><use href="#s-maki"/></svg>
     <svg class="dd" style="top:9%;left:6%;--s:46px;--r:-12deg"><use href="#d-star"/></svg>
     <svg class="dd" style="top:13%;right:8%;--s:58px;--r:8deg"><use href="#d-tomato"/></svg>
     <svg class="dd" style="top:58%;left:4%;--s:42px;--r:-6deg"><use href="#d-heart"/></svg>
@@ -545,9 +559,8 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
         </div>
         <div class="setting stack"><span>Colors</span>
           <div class="swatches" id="seg" role="radiogroup" aria-label="Colors">
-            <button type="button" class="sw" role="radio" data-look="auto" title="Matcha by day, Sushi at night" style="--sw-paper:linear-gradient(135deg,#E6F3DA 50%,#1F2B25 50%);--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">auto</span></button>
             <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">matcha</span></button>
-            <button type="button" class="sw" role="radio" data-look="sushi" style="--sw-paper:radial-gradient(circle,#FF8A65 0 34%,#FFF4E6 35% 100%);--sw-ink:#1F2B25"><span class="sw-dot"></span><span class="sw-name">sushi</span></button>
+            <button type="button" class="sw" role="radio" data-look="sushi" style="--sw-paper:#FFFFFF;--sw-ink:#2A3A33;--sw-dot:#FFA184"><span class="sw-dot"></span><span class="sw-name">sushi</span></button>
           </div>
         </div>
         <button class="go" id="settings-done" type="button">Done</button>

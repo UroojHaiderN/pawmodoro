@@ -5,9 +5,9 @@
   const NS = 'http://www.w3.org/2000/svg';
   const KEY = 'bunodoro:v1'; // kept from the first version so saved tasks carry over
   const LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
-  const LOOKS = ['auto', 'matcha', 'sushi'];
-  const OLD_LOOKS = { paper: 'auto', night: 'auto', midnight: 'auto', strawberry: 'auto', strawmatcha: 'auto', ube: 'auto', pistachio: 'auto', cherry: 'auto', glass: 'auto', blueberry: 'auto', lavender: 'auto', peach: 'auto' }; // earlier color names
-  const LOOK_SAY = { auto: 'matching your system', matcha: 'matcha latte time', sushi: 'sushi night!' };
+  const LOOKS = ['matcha', 'sushi'];
+  const OLD_LOOKS = {}; // earlier colors fall back to matcha
+  const LOOK_SAY = { matcha: 'matcha latte time', sushi: 'sushi time!' };
   const STEP = { focus: { min: 1, max: 90, big: 5 }, short: { min: 1, max: 30, big: 1 }, long: { min: 5, max: 60, big: 5 }, every: { min: 2, max: 8, big: 1 } };
   const NUDGE_RANGE = { water: [30, 60], stretch: [45, 75] }; // minutes of timer time, picked at random each time
   const SNOOZE = 10 * 60000;
@@ -52,7 +52,7 @@
         { id: uid(), text: 'Add one real thing to finish today', done: false },
         { id: uid(), text: 'Open pawmodoro', done: true },
       ],
-      currentId: null, buddy: 'cat', look: 'auto', vol: 60, muted: false, mini: false, showDone: false,
+      currentId: null, buddy: 'cat', look: 'matcha', vol: 60, muted: false, mini: false, showDone: false,
       timer: { phase: 'focus', cycle: 0, total: 25 * 60000, remaining: 25 * 60000, running: false, endAt: 0, fresh: true },
       nudges: { water: 0, stretch: 0, waterDue: 0, stretchDue: 0 }, // timer time since the last nudge, and when the next is due (ms)
       today: freshToday(),
@@ -67,7 +67,7 @@
     out.nudges = { ...base.nudges, ...(d.nudges || {}) };
     if (!Array.isArray(out.tasks)) out.tasks = base.tasks;
     if (OLD_LOOKS[out.look]) out.look = OLD_LOOKS[out.look];
-    if (!LOOKS.includes(out.look)) out.look = 'auto';
+    if (!LOOKS.includes(out.look)) out.look = 'matcha';
     if (out.buddy !== 'cat' && out.buddy !== 'bunny') out.buddy = 'cat';
     return out;
   }

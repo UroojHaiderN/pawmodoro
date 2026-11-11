@@ -1,4 +1,4 @@
-/* Pawmodoro colors: Matcha by day, Sushi (a maki roll) at night. Shared by the landing page and the timer app. */
+/* Pawmodoro colors: Matcha and Sushi. Shared by the landing page and the timer app. */
 :root{
   --desk:#F5F9EF;
   --blob-a:#DCEFD0;
@@ -25,57 +25,6 @@
   --font-ui:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
   --paw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='16' rx='5.4' ry='4.6'/%3E%3Ccircle cx='5.2' cy='10.2' r='2.4'/%3E%3Ccircle cx='9.2' cy='6' r='2.5'/%3E%3Ccircle cx='14.8' cy='6' r='2.5'/%3E%3Ccircle cx='18.8' cy='10.2' r='2.4'/%3E%3C/svg%3E");
 }
-@media (prefers-color-scheme: dark){
-:root:not([data-theme="light"]){
-  --desk:#141D19;
-  --blob-a:#26362E;
-  --blob-b:#3A2420;
-  --doodle:rgba(255,244,230,0.13);
-  --paper:#1F2B25;
-  --paper-hi:#2A3A31;
-  --thumb:#1F2B25;
-  --ink:#FFF4E6;
-  --ink-soft:rgba(255,244,230,0.76);
-  --line:rgba(255,244,230,0.28);
-  --btn-bg:#FF8A65;
-  --btn-fg:#1F2B25;
-  --blush:#FF9C80;
-  --bunny-fill:#1F2B25;
-  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
-  --glass:none;
-  --grain:0.3;
-  --grain-blend:screen;
-  --tshadow:none;
-  --tape:rgba(168,198,108,.8);
-  --grid:rgba(255,244,230,0.08);
-  color-scheme:dark;
-}
-}
-:root[data-theme="dark"]{
-  --desk:#141D19;
-  --blob-a:#26362E;
-  --blob-b:#3A2420;
-  --doodle:rgba(255,244,230,0.13);
-  --paper:#1F2B25;
-  --paper-hi:#2A3A31;
-  --thumb:#1F2B25;
-  --ink:#FFF4E6;
-  --ink-soft:rgba(255,244,230,0.76);
-  --line:rgba(255,244,230,0.28);
-  --btn-bg:#FF8A65;
-  --btn-fg:#1F2B25;
-  --blush:#FF9C80;
-  --bunny-fill:#1F2B25;
-  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
-  --glass:none;
-  --grain:0.3;
-  --grain-blend:screen;
-  --tshadow:none;
-  --tape:rgba(168,198,108,.8);
-  --grid:rgba(255,244,230,0.08);
-  color-scheme:dark;
-}
-/* The app's own color picker wins over the viewer's theme when set */
 :root[data-look="matcha"]{
   --desk:#F5F9EF;
   --blob-a:#DCEFD0;
@@ -101,26 +50,30 @@
   color-scheme:light;
 }
 :root[data-look="sushi"]{
-  --desk:#141D19;
-  --blob-a:#26362E;
-  --blob-b:#3A2420;
-  --doodle:rgba(255,244,230,0.13);
-  --paper:#1F2B25;
-  --paper-hi:#2A3A31;
-  --thumb:#1F2B25;
-  --ink:#FFF4E6;
-  --ink-soft:rgba(255,244,230,0.76);
-  --line:rgba(255,244,230,0.28);
-  --btn-bg:#FF8A65;
-  --btn-fg:#1F2B25;
-  --blush:#FF9C80;
-  --bunny-fill:#1F2B25;
-  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
+  --desk:#F2D4CB;
+  --blob-a:#F8E1D9;
+  --blob-b:#EAC2B6;
+  --doodle:rgba(43,43,53,0.14);
+  --paper:#FFF8F3;
+  --paper-hi:#FBE3DA;
+  --thumb:#FFF8F3;
+  --ink:#2B2B35;
+  --ink-soft:rgba(43,43,53,0.76);
+  --line:rgba(43,43,53,0.26);
+  --btn-bg:#D9603F;
+  --btn-fg:#FFF8F3;
+  --blush:#F4A39B;
+  --bunny-fill:#FFF8F3;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(217,96,63,0.35);
   --glass:none;
-  --grain:0.3;
-  --grain-blend:screen;
+  --grain:0.5;
+  --grain-blend:multiply;
   --tshadow:none;
-  --tape:rgba(168,198,108,.8);
-  --grid:rgba(255,244,230,0.08);
-  color-scheme:dark;
+  --tape:rgba(240,140,110,.92);
+  --grid:rgba(217,96,63,0.10);
+  color-scheme:light;
 }
+/* Sushi swaps the desk doodles for little sushi pieces */
+.dd-sushi{display:none;opacity:.88}
+:root[data-look="sushi"] .dd-sushi{display:block}
+:root[data-look="sushi"] .dd:not(.dd-sushi){display:none}
