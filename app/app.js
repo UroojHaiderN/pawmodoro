@@ -7,7 +7,6 @@
   const LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
   const LOOKS = ['auto', 'strawberry', 'matcha', 'blueberry', 'lavender', 'peach', 'midnight', 'glass'];
   const OLD_LOOKS = { paper: 'strawberry', night: 'midnight' }; // names from earlier versions
-  const LOOK_ICON = { auto: 'i-auto', midnight: 'i-moon', glass: 'i-glass' }; // the rest use the sun
   const LOOK_SAY = {
     auto: 'matching your system', strawberry: 'strawberry milk!', matcha: 'matcha latte time',
     blueberry: 'blueberry!', lavender: 'taro bubble tea', peach: 'just peachy', midnight: 'starry night', glass: 'ooh, glassy',
@@ -352,8 +351,6 @@
     el.bunny.dataset.buddy = S.buddy; el.miniBun.dataset.buddy = S.buddy;
     el.tag.textContent = `a tiny focus timer with a ${S.buddy} buddy`;
     el.hintBuddy.textContent = `your ${S.buddy}`;
-    setIcon(el.look, LOOK_ICON[S.look] || 'i-sun');
-    el.look.setAttribute('aria-label', `Colors: ${S.look}. Switch colors`);
     if (el.themeMeta) el.themeMeta.content = getComputedStyle(document.documentElement).getPropertyValue('--desk').trim() || '#FFF4F7';
     el.phase.textContent = LABEL[t.phase];
     el.card.dataset.running = String(t.running);
@@ -367,12 +364,9 @@
     el.vol.value = S.muted ? 0 : S.vol;
     el.vol.style.setProperty('--fill', (S.muted ? 0 : S.vol) + '%');
     el.card.hidden = S.mini; el.mini.hidden = !S.mini;
-    const floatIcon = pipWin ? 'i-dock' : 'i-float';
-    const floatLabel = pipWin ? 'Put the timer back in the page' : 'Float on top of your screen';
-    [el.floatBtn, el.miniFloat].forEach((b) => {
-      b.hidden = !canFloat;
-      setIcon(b, floatIcon); b.setAttribute('aria-label', floatLabel); b.title = pipWin ? 'Back to the page' : 'Float on top';
-    });
+    el.floatTop.hidden = !canFloat;
+    setIcon(el.floatTop, pipWin ? 'i-dock' : 'i-float');
+    el.floatTop.querySelector('span').textContent = pipWin ? 'Bring it back' : 'Float on top';
     if (pipWin) {
       pipWin.document.documentElement.dataset.look = S.look;
       pipWin.document.body.classList.toggle('is-mini', S.mini);
@@ -479,13 +473,13 @@
       doneToggle: $('#done-toggle'), doneCount: $('#done-count'),
       addForm: $('#add-form'), addBtn: $('#add-btn'), addInput: $('#add-input'),
       go: $('#go'), goLabel: $('#go-label'), miniGo: $('#mini-go'),
-      mute: $('#mute'), vol: $('#vol'), look: $('#look'), notify: $('#notify'),
+      mute: $('#mute'), vol: $('#vol'), notify: $('#notify'),
       seg: $('#seg'), buddySeg: $('#buddy-seg'),
       faceMain: $('#face-main'), faceSettings: $('#face-settings'), settingsBtn: $('#settings-btn'),
       today: $('#today'), tag: $('#tag'), hintBuddy: $('#hint-buddy'), install: $('#install'),
       nudge: $('#nudge'), nudgeUse: $('#nudge .nudge-ico use'), nudgeTitle: $('#nudge-title'), nudgeSub: $('#nudge-sub'),
       nudgeDone: $('#nudge-done'), nudgeLater: $('#nudge-later'), miniNudge: $('#mini-nudge'),
-      floatBtn: $('#float-btn'), miniFloat: $('#mini-float'), miniBtn: $('#mini-btn'), miniExpand: $('#mini-expand'),
+      floatTop: $('#float-top'), miniBtn: $('#mini-btn'), miniExpand: $('#mini-expand'),
       out: { focus: $('#out-focus'), short: $('#out-short'), long: $('#out-long') },
       themeMeta: $('meta[name="theme-color"]'),
     });
@@ -533,7 +527,6 @@
     el.vol.addEventListener('change', () => { audio(); pop(); });
 
     const setLook = (l) => { S.look = l; render(); save(); say(LOOK_SAY[l], 1600); };
-    el.look.addEventListener('click', () => setLook(LOOKS[(LOOKS.indexOf(S.look) + 1) % LOOKS.length]));
     el.seg.addEventListener('click', (e) => { const b = e.target.closest('[data-look]'); if (b) setLook(b.dataset.look); });
     el.buddySeg.addEventListener('click', (e) => {
       const b = e.target.closest('[data-buddy]'); if (!b) return;
@@ -544,8 +537,7 @@
     // Move focus along only for keyboard users (a mouse click has detail > 0), so no stray focus ring appears.
     el.miniBtn.addEventListener('click', (e) => { S.mini = true; render(); save(); resizePip(); if (!e.detail) el.miniExpand.focus(); });
     el.miniExpand.addEventListener('click', (e) => { S.mini = false; render(); save(); resizePip(); if (!e.detail) el.miniBtn.focus(); });
-    el.floatBtn.addEventListener('click', toggleFloat);
-    el.miniFloat.addEventListener('click', toggleFloat);
+    el.floatTop.addEventListener('click', toggleFloat);
     $('#unfloat').addEventListener('click', () => { if (pipWin) pipWin.close(); });
 
     el.install.hidden = onMac || !installEvt;
@@ -557,13 +549,14 @@
       installEvt = null; el.install.hidden = true;
     });
 
-    const showSettings = (on) => {
+    const showSettings = (on, e) => {
       el.faceMain.hidden = on; el.faceSettings.hidden = !on;
       el.settingsBtn.setAttribute('aria-pressed', String(on));
-      (on ? el.faceSettings.querySelector('.stepper button') : el.settingsBtn).focus();
+      // move focus along only for keyboard users, so mouse clicks leave no dashed ring
+      if (e && !e.detail) (on ? el.faceSettings.querySelector('.stepper button') : el.settingsBtn).focus();
     };
-    el.settingsBtn.addEventListener('click', () => showSettings(el.faceSettings.hidden));
-    $('#settings-done').addEventListener('click', () => showSettings(false));
+    el.settingsBtn.addEventListener('click', (e) => showSettings(el.faceSettings.hidden, e));
+    $('#settings-done').addEventListener('click', (e) => showSettings(false, e));
     el.faceSettings.addEventListener('click', (e) => {
       const b = e.target.closest('.stepper button'); if (!b) return;
       const key = b.closest('.stepper').dataset.key, dir = +b.dataset.d;
@@ -592,9 +585,6 @@
     window.addEventListener('pagehide', saveNow);
 
     if (inApp) {
-      const hideBtn = $('#hide-btn');
-      hideBtn.hidden = false;
-      hideBtn.addEventListener('click', () => post({ type: 'hide' }));
       el.notify.closest('label').hidden = true; // the floating card is always on screen instead
       if ('ResizeObserver' in window) new ResizeObserver(() => sendLayout()).observe(el.stage);
       window.addEventListener('scroll', () => { if (window.scrollX || window.scrollY) window.scrollTo(0, 0); });

@@ -345,8 +345,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
             savedFromLastRun: before !== null,
             stage: [Math.round(r.width), Math.round(r.height)],
             handFont: document.fonts.check('16px Gaegu'),
-            floatHidden: document.querySelector('#float-btn').hidden,
-            hideShown: !document.querySelector('#hide-btn').hidden
+            barButtons: document.querySelectorAll('.bar button').length
           });
         })()
         """

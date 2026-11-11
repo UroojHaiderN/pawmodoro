@@ -195,6 +195,7 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 .icon svg{width:18px;height:18px}
 .icon:hover,.icon[aria-pressed="true"]{background:var(--paper-hi);opacity:1}
 .spacer{flex:1}
+.sound{display:flex;align-items:center;gap:4px}
 .vol{-webkit-appearance:none;appearance:none;width:86px;height:18px;background:transparent;cursor:pointer;margin:0}
 .vol::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--ink) var(--fill,60%),var(--line) 0)}
 .vol::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;background:var(--thumb);border:2px solid var(--ink)}
@@ -362,6 +363,7 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
     <h1 class="brand"><span class="wordmark">pawmodoro<svg class="wm-paw" aria-hidden="true"><use href="#i-paw"/></svg></span><span class="tag" id="tag">a tiny focus timer with a cat buddy</span></h1>
     <div class="top-right">
       <p class="today" id="today">Today: 0 pomodoros · 0 min focused</p>
+      <button class="install" id="float-top" type="button" hidden><svg aria-hidden="true"><use href="#i-float"/></svg><span>Float on top</span></button>
       <a class="install" id="mac-link" href="../" target="_blank" rel="noopener" hidden><svg aria-hidden="true"><use href="#i-paw"/></svg>Get the Mac app</a>
       <button class="install" id="install" type="button" hidden><svg aria-hidden="true"><use href="#i-install"/></svg>Install app</button>
     </div>
@@ -528,6 +530,9 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
         <div class="setting"><span>Long break</span>
           <div class="stepper" data-key="long"><button type="button" data-d="-1" aria-label="Shorter long break"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-long">15</output><button type="button" data-d="1" aria-label="Longer long break"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">min</span></div>
         </div>
+        <div class="setting"><span>Sound</span>
+          <div class="sound"><button class="icon" id="mute" type="button" aria-label="Mute sounds" title="Sound"><svg aria-hidden="true"><use href="#i-speaker"/></svg></button><input class="vol" id="vol" type="range" min="0" max="100" value="60" aria-label="Sound volume"></div>
+        </div>
         <label class="switch-row" for="notify"><span>Desktop notifications</span><input class="switch" type="checkbox" id="notify"></label>
         <div class="setting"><span>Focus buddy</span>
           <div class="seg seg-sm" id="buddy-seg" role="radiogroup" aria-label="Focus buddy">
@@ -551,14 +556,9 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
       </div>
 
       <footer class="bar">
-        <button class="icon" id="mute" type="button" aria-label="Mute sounds" title="Sound"><svg aria-hidden="true"><use href="#i-speaker"/></svg></button>
-        <input class="vol" id="vol" type="range" min="0" max="100" value="60" aria-label="Sound volume">
-        <span class="spacer"></span>
-        <button class="icon" id="float-btn" type="button" aria-label="Float on top of your screen" title="Float on top"><svg aria-hidden="true"><use href="#i-float"/></svg></button>
-        <button class="icon" id="look" type="button" aria-label="Theme" title="Theme"><svg aria-hidden="true"><use href="#i-auto"/></svg></button>
         <button class="icon" id="mini-btn" type="button" aria-label="Shrink to mini timer" title="Mini mode"><svg aria-hidden="true"><use href="#i-shrink"/></svg></button>
+        <span class="spacer"></span>
         <button class="icon" id="settings-btn" type="button" aria-label="Settings" aria-pressed="false" title="Settings"><svg aria-hidden="true"><use href="#i-tune"/></svg></button>
-        <button class="icon" id="hide-btn" type="button" aria-label="Hide. Click the paw in the menu bar to bring it back" title="Hide" hidden><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
       </footer>
     </section>
 
@@ -584,7 +584,6 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
       <div class="mini-time" id="mini-time" role="timer" aria-label="Time left"></div>
       <button class="icon mini-nudge" id="mini-nudge" type="button" aria-label="Done" hidden><svg aria-hidden="true"><use href="#i-water"/></svg></button>
       <button class="go" id="mini-go" type="button" aria-label="Start"><svg aria-hidden="true"><use href="#i-play"/></svg></button>
-      <button class="icon" id="mini-float" type="button" aria-label="Float on top of your screen" title="Float on top"><svg aria-hidden="true"><use href="#i-float"/></svg></button>
       <button class="icon" id="mini-expand" type="button" aria-label="Open the full timer" title="Full timer"><svg aria-hidden="true"><use href="#i-expand"/></svg></button>
     </section>
 
@@ -595,7 +594,7 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
     </div>
   </main>
 
-  <p class="hint"><kbd>Space</kbd> starts or pauses. The float button keeps <span id="hint-buddy">your cat</span> on top of every window in Chrome and Edge. Every so often, it reminds you to sip water and stretch.</p>
+  <p class="hint"><kbd>Space</kbd> starts or pauses. <b>Float on top</b> keeps <span id="hint-buddy">your cat</span> above every window in Chrome and Edge. Every so often, it reminds you to sip water and stretch.</p>
 </div>
 
 <script src="app.js"></script>
