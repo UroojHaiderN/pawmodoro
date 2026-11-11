@@ -57,6 +57,7 @@ final class BundleSchemeHandler: NSObject, WKURLSchemeHandler {
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKScriptMessageHandler, WKNavigationDelegate {
     private var panel: FloatingPanel!
     private var webView: PawWebView!
+    private var glassView: NSVisualEffectView! // real frosted glass behind the card in the Glass colors
     private var statusItem: NSStatusItem!
     private var dragRects: [NSRect] = []
     private var selftestDir: String?
@@ -107,7 +108,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         panel.isFloatingPanel = true
         panel.hidesOnDeactivate = false
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .ignoresCycle]
-        panel.contentView = webView
+
+        // The blur sits underneath the see-through page and only shows in the Glass colors.
+        let container = NSView(frame: NSRect(origin: .zero, size: size))
+        glassView = NSVisualEffectView(frame: .zero)
+        glassView.material = .hudWindow
+        glassView.blendingMode = .behindWindow
+        glassView.state = .active // stay frosted even though another app is in front
+        glassView.isHidden = true
+        container.addSubview(glassView)
+        webView.frame = container.bounds
+        container.addSubview(webView)
+        panel.contentView = container
         panel.setFrameTopLeftPoint(savedTopLeft() ?? defaultTopLeft(for: size))
         panel.delegate = self
 
@@ -201,6 +213,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         return image
     }
 
+    /// The card's shape: a rectangle whose four corners each have their own horizontal and vertical radius,
+    /// like the CSS border-radius on the card (radii in order top-left, top-right, bottom-right, bottom-left).
+    static func cardMask(size: NSSize, radii: [[CGFloat]]) -> NSImage {
+        NSImage(size: size, flipped: true) { rect in
+            func corner(_ i: Int) -> (CGFloat, CGFloat) {
+                i < radii.count && radii[i].count == 2 ? (radii[i][0], radii[i][1]) : (24, 24)
+            }
+            let (tlX, tlY) = corner(0), (trX, trY) = corner(1), (brX, brY) = corner(2), (blX, blY) = corner(3)
+            let w = rect.width, h = rect.height, k: CGFloat = 0.4477 // 1 - 0.5523, the usual Bézier circle factor
+            let path = NSBezierPath()
+            path.move(to: NSPoint(x: tlX, y: 0))
+            path.line(to: NSPoint(x: w - trX, y: 0))
+            path.curve(to: NSPoint(x: w, y: trY), controlPoint1: NSPoint(x: w - trX * k, y: 0), controlPoint2: NSPoint(x: w, y: trY * k))
+            path.line(to: NSPoint(x: w, y: h - brY))
+            path.curve(to: NSPoint(x: w - brX, y: h), controlPoint1: NSPoint(x: w, y: h - brY * k), controlPoint2: NSPoint(x: w - brX * k, y: h))
+            path.line(to: NSPoint(x: blX, y: h))
+            path.curve(to: NSPoint(x: 0, y: h - blY), controlPoint1: NSPoint(x: blX * k, y: h), controlPoint2: NSPoint(x: 0, y: h - blY * k))
+            path.line(to: NSPoint(x: 0, y: tlY))
+            path.curve(to: NSPoint(x: tlX, y: 0), controlPoint1: NSPoint(x: 0, y: tlY * k), controlPoint2: NSPoint(x: tlX * k, y: 0))
+            path.close()
+            NSColor.black.setFill()
+            path.fill()
+            return true
+        }
+    }
+
     /// Without a main menu, copy and paste would not work while typing a task.
     private func buildMainMenu() {
         let main = NSMenu()
@@ -243,6 +281,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
         case "tick": // show the countdown next to the paw while a timer runs
             let running = (body["running"] as? Bool) ?? false
             statusItem.button?.title = running ? " " + ((body["text"] as? String) ?? "") : ""
+        case "glass": // frosted glass cut to the card's exact rounded shape
+            let on = (body["on"] as? Bool) ?? false
+            glassView.isHidden = !on
+            guard on, let r = body["rect"] as? [String: Any], let host = glassView.superview else { return }
+            let rect = NSRect(x: num(r, "x"), y: num(r, "y"), width: num(r, "w"), height: num(r, "h"))
+            guard rect.width > 0, rect.height > 0 else { glassView.isHidden = true; return }
+            let radii = (body["radii"] as? [[NSNumber]] ?? []).map { $0.map { CGFloat($0.doubleValue) } }
+            glassView.frame = NSRect(x: rect.minX, y: host.bounds.height - rect.maxY, width: rect.width, height: rect.height)
+            glassView.maskImage = Self.cardMask(size: rect.size, radii: radii)
         case "hide":
             panel.orderOut(nil)
         default:
@@ -266,6 +313,24 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
                 try? png.write(to: URL(fileURLWithPath: dir).appendingPathComponent(name))
             }
             next()
+        }
+    }
+
+    /// Switches to the Glass colors, records where the frosted layer landed, then puts the old colors back.
+    private func checkGlass(_ dir: String) {
+        let pickGlass = "window.__lookBefore = (document.querySelector('.sw[aria-checked=true]') || { dataset: { look: 'auto' } }).dataset.look; document.querySelector('[data-look=glass]').click(); 1"
+        webView.evaluateJavaScript(pickGlass) { _, _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.log("GLASS shown=\(!self.glassView.isHidden) frame=\(self.glassView.frame) mask=\(self.glassView.maskImage?.size ?? .zero) panel=\(self.panel.frame.size)")
+                self.snapshot("glass.png", dir) {
+                    self.webView.evaluateJavaScript("document.querySelector('[data-look=' + window.__lookBefore + ']').click(); 1") { _, _ in
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                            self.log("AFTER glassShown=\(!self.glassView.isHidden)")
+                            NSApp.terminate(nil)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -294,7 +359,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, WKSc
                         self.log("PANEL-MINI \(self.panel.frame) dragAreas=\(self.dragRects.count)")
                         self.snapshot("mini.png", dir) {
                             self.webView.evaluateJavaScript("document.querySelector('#mini-expand').click(); 1") { _, _ in
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) { NSApp.terminate(nil) }
+                                self.checkGlass(dir)
                             }
                         }
                     }

@@ -1,0 +1,613 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="A cute hand-drawn pomodoro timer with a cat buddy, water and stretch nudges, and a floating mini window.">
+<meta name="theme-color" content="#FFE6EC">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Pawmodoro</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="../palettes.css">
+<style>
+/* Layout: one floating paper card on a doodled desk, centered; it shrinks to a mini pill on request */
+*,*::before,*::after{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html,body{height:100%}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--desk);color:var(--ink);font-family:var(--font-ui);font-size:14px;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px dashed var(--ink);outline-offset:2px}
+.defs{position:absolute;width:0;height:0;overflow:hidden}
+
+/* ---------- desk ---------- */
+.desk{
+  position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;gap:20px;
+  padding-block:20px 22px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  overflow:hidden;
+  background:
+    radial-gradient(circle,var(--grid) 1.3px,transparent 1.7px) 0 0/22px 22px,
+    radial-gradient(38rem 28rem at 12% 18%,var(--blob-a),transparent 62%),
+    radial-gradient(36rem 30rem at 88% 86%,var(--blob-b),transparent 62%),
+    var(--desk);
+}
+.doodles{position:absolute;inset:0;pointer-events:none;z-index:0}
+.dd{position:absolute;width:var(--s);height:var(--s);color:var(--doodle);transform:rotate(var(--r,0deg))}
+.topbar,.stage,.hint{position:relative;z-index:1}
+.topbar{width:100%;max-width:1000px;display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:2px 18px}
+.brand{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px;margin:0;font-weight:400}
+.wordmark{font-family:var(--font-hand);font-weight:700;font-size:1.9rem;line-height:1}
+.wm-paw{width:.6em;height:.6em;margin-left:.1em;vertical-align:.4em;transform:rotate(20deg)}
+.tape{
+  position:absolute;top:-11px;left:50%;z-index:3;width:92px;height:24px;pointer-events:none;
+  transform:translateX(-50%) rotate(-3deg);
+  background:repeating-linear-gradient(45deg,transparent 0 6px,rgba(255,255,255,.32) 6px 9px),var(--tape);
+  clip-path:polygon(0 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,0 100%,4% 75%,0 50%,4% 25%);
+}
+.tag{color:var(--ink-soft);font-size:.82rem}
+.today{margin:0;color:var(--ink-soft);font-size:.82rem;font-variant-numeric:tabular-nums}
+.stage{flex:1;width:100%;display:grid;place-items:center}
+.hint{margin:0;color:var(--ink-soft);font-size:.78rem;text-align:center;text-wrap:balance;line-height:1.7}
+kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);border-radius:6px;padding:1px 6px}
+
+/* ---------- card ---------- */
+.card,.mini{
+  position:relative;isolation:isolate;background:var(--paper);color:var(--ink);text-shadow:var(--tshadow);
+  box-shadow:var(--card-shadow);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
+}
+.card{
+  width:min(304px,100%);
+  border-radius:30px 24px 32px 22px / 24px 32px 22px 30px;
+  padding:20px 20px 12px;
+}
+.card::before,.mini::before{
+  content:"";position:absolute;inset:7px;border:2px solid var(--ink);border-radius:inherit;
+  filter:url(#wobble-lg);pointer-events:none;opacity:.92;
+}
+.card::after,.mini::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:-1;
+  opacity:var(--grain);mix-blend-mode:var(--grain-blend);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .34 0 0 0 0 .4 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* bunny */
+.bunny-wrap{position:relative;display:grid;place-items:center;height:116px;margin-top:0}
+.bunny{width:146px;height:122px;color:var(--ink);overflow:visible}
+.bunny [data-show]{display:none}
+.bunny[data-state="idle"] [data-show~="idle"],
+.bunny[data-state="focus"] [data-show~="focus"],
+.bunny[data-state="break"] [data-show~="break"],
+.bunny[data-state="cheer"] [data-show~="cheer"],
+.bunny[data-state="sip"] [data-show~="sip"],
+.bunny[data-state="stretch"] [data-show~="stretch"]{display:inline}
+.bunny[data-state="stretch"] .bun{animation:hop 1.2s ease-in-out infinite}
+.bunny[data-buddy="cat"] .only-bunny,.bunny[data-buddy="bunny"] .only-cat{display:none!important}
+.bun{fill:var(--bunny-fill);stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;transform-box:fill-box;transform-origin:50% 100%}
+.bun .nofill{fill:none}
+.bun .ink{fill:currentColor;stroke:none}
+.bun .inkfill{fill:currentColor}
+.bun .blush ellipse{fill:var(--blush);stroke:none;opacity:.9}
+.bun text{font-family:var(--font-hand);font-weight:700;fill:currentColor;stroke:none}
+.ear-r{transform-box:fill-box;transform-origin:20% 100%}
+.bunny[data-state="idle"] .ear-r{animation:twitch 5s ease-in-out infinite}
+.bunny[data-state="focus"] .bun{animation:bob 2.6s ease-in-out infinite}
+.bunny[data-state="cheer"] .bun{animation:hop .45s ease-out 3}
+.spark{transform-box:fill-box;transform-origin:center;animation:spark .9s ease-in-out infinite alternate}
+.z{animation:float 2.6s ease-in-out infinite;transform-box:fill-box}
+.z2{animation-delay:-1.3s}
+.steam{animation:steam 2.2s ease-in-out infinite}
+.steam.s2{animation-delay:-1.1s}
+@keyframes twitch{0%,86%,100%{transform:rotate(0)}90%{transform:rotate(9deg)}94%{transform:rotate(-3deg)}}
+@keyframes bob{50%{transform:translateY(1.4px)}}
+@keyframes hop{40%{transform:translateY(-6px)}}
+@keyframes spark{from{transform:scale(.55) rotate(0)}to{transform:scale(1.1) rotate(25deg)}}
+@keyframes float{0%{transform:translate(0,5px);opacity:0}30%{opacity:1}100%{transform:translate(-4px,-7px);opacity:0}}
+@keyframes steam{0%,100%{opacity:.25}50%{opacity:.9}}
+
+.bubble{
+  position:absolute;left:calc(50% + 44px);top:0;max-width:94px;margin:0;
+  background:var(--paper);border:1.8px solid var(--ink);
+  border-radius:16px 16px 16px 4px;padding:5px 10px 6px;
+  font-family:var(--font-hand);font-weight:700;font-size:1rem;line-height:1.05;
+  transform-origin:0 100%;transform:scale(.5) rotate(-6deg);opacity:0;
+  transition:opacity .2s,transform .25s cubic-bezier(.3,1.6,.5,1);pointer-events:none;
+}
+.bubble.show{opacity:1;transform:scale(1) rotate(-2deg)}
+
+/* faces */
+.face{display:flex;flex-direction:column;gap:10px}
+.time{
+  display:flex;justify-content:center;margin-top:-2px;
+  font-family:var(--font-hand);font-weight:700;font-size:4.5rem;line-height:.95;
+}
+.time span{display:inline-block;width:.52em;text-align:center}
+.time .colon{width:.28em;transform:translateY(-.05em)}
+.card[data-running="true"] .colon{animation:blink 2s steps(1) infinite}
+@keyframes blink{50%{opacity:.3}}
+.phase-row{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:-4px}
+.phase{font-family:var(--font-hand);font-weight:700;font-size:1.1rem}
+.dots{display:flex;gap:3px;align-items:center}
+.dot{width:19px;height:19px;
+  background:linear-gradient(to top,var(--ink) calc(var(--p,0) * 100%),var(--line) 0);
+  -webkit-mask:var(--paw) center/contain no-repeat;mask:var(--paw) center/contain no-repeat}
+.dot:nth-child(odd){transform:rotate(-14deg) translateY(1.5px)}
+.dot:nth-child(even){transform:rotate(14deg) translateY(-1.5px)}
+
+/* tasks */
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:8.9rem;overflow-y:auto;scrollbar-width:thin}
+.task{
+  display:flex;align-items:center;gap:8px;padding:5px 6px 5px 7px;
+  border:1.6px solid var(--line);border-radius:14px 12px 15px 11px / 12px 15px 11px 14px;
+  font-size:.8rem;line-height:1.3;transition:opacity .35s,transform .35s;
+}
+.task.current{background:var(--paper-hi);border-color:var(--ink)}
+.task.leaving{opacity:0;transform:translateX(14px)}
+.check{flex:none;width:18px;height:18px;padding:0;border-radius:50%;border:1.7px solid var(--ink);background:transparent;display:grid;place-items:center;color:var(--btn-fg)}
+.check svg{width:12px;height:12px;opacity:0}
+.task.is-done .check{background:var(--ink)}
+.task.is-done .check svg{opacity:1}
+.check:hover svg{opacity:.45;color:var(--ink)}
+.task.is-done .check:hover svg{opacity:1;color:var(--btn-fg)}
+.t-text{flex:1;min-width:0;padding:0;border:0;background:none;text-align:left;overflow-wrap:anywhere}
+.task.is-done .t-text{text-decoration:line-through;text-decoration-thickness:1.5px;color:var(--ink-soft)}
+.del{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:8px;background:none;display:grid;place-items:center;opacity:0;transition:opacity .15s}
+.del svg{width:14px;height:14px}
+.task:hover .del,.task:focus-within .del{opacity:.75}
+@media (hover:none){.del{opacity:.5}}
+.empty{margin:0;font-size:.78rem;color:var(--ink-soft);text-align:center;padding:4px 0}
+.done-row{display:flex;justify-content:space-between;align-items:center;margin-top:-2px}
+.link{border:0;background:none;padding:2px 4px;font-size:.76rem;color:var(--ink-soft);display:flex;align-items:center;gap:4px;border-radius:8px}
+.link:hover{color:var(--ink)}
+.link svg{width:13px;height:13px;transition:transform .2s}
+.done-toggle[aria-expanded="true"] svg{transform:rotate(90deg)}
+.add{margin:0}
+.add-btn{border:0;background:none;padding:2px 4px;font-size:.8rem;color:var(--ink-soft);display:flex;gap:6px;align-items:center;border-radius:8px}
+.add-btn:hover{color:var(--ink)}
+.add-btn svg{width:14px;height:14px}
+.add-input{width:100%;font:inherit;font-size:.8rem;color:var(--ink);background:var(--paper-hi);border:1.6px dashed var(--ink);border-radius:12px;padding:6px 10px;outline:none}
+.add-input::placeholder{color:var(--ink-soft)}
+
+/* controls */
+.controls{display:flex;gap:8px;align-items:center;margin-top:2px}
+.go{
+  flex:1;height:44px;border-radius:999px;border:2px solid var(--ink);background:var(--btn-bg);color:var(--btn-fg);
+  font-family:var(--font-hand);font-weight:700;font-size:1.3rem;text-shadow:none;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  box-shadow:0 3px 0 var(--line);transition:transform .1s,box-shadow .1s;
+}
+.go svg{width:16px;height:16px}
+.go:active{transform:translateY(2px);box-shadow:0 1px 0 var(--line)}
+.round{flex:none;width:40px;height:40px;border-radius:50%;border:1.8px solid var(--ink);background:transparent;display:grid;place-items:center;padding:0}
+.round svg{width:18px;height:18px}
+.round:hover{background:var(--paper-hi)}
+
+/* bottom bar */
+.bar{display:flex;align-items:center;gap:4px;margin-top:12px;padding-top:9px;border-top:1.6px dashed var(--line)}
+.icon{width:32px;height:32px;padding:0;border:0;border-radius:10px;background:transparent;display:grid;place-items:center;opacity:.85}
+.icon svg{width:18px;height:18px}
+.icon:hover,.icon[aria-pressed="true"]{background:var(--paper-hi);opacity:1}
+.spacer{flex:1}
+.vol{-webkit-appearance:none;appearance:none;width:86px;height:18px;background:transparent;cursor:pointer;margin:0}
+.vol::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--ink) var(--fill,60%),var(--line) 0)}
+.vol::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;margin-top:-5px;border-radius:50%;background:var(--thumb);border:2px solid var(--ink)}
+.vol::-moz-range-track{height:4px;border-radius:4px;background:var(--line)}
+.vol::-moz-range-progress{height:4px;border-radius:4px;background:var(--ink)}
+.vol::-moz-range-thumb{width:10px;height:10px;border-radius:50%;background:var(--thumb);border:2px solid var(--ink)}
+
+/* settings */
+.settings h2{margin:0 0 2px;font-family:var(--font-hand);font-weight:700;font-size:1.6rem;line-height:1;text-align:center}
+.setting{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:.8rem;padding:4px 0 8px;border-bottom:1.4px dashed var(--line)}
+.setting.stack{flex-direction:column;align-items:stretch;gap:8px}
+.stepper{display:flex;align-items:center;gap:6px}
+.stepper button{width:26px;height:26px;padding:0;border-radius:50%;border:1.6px solid var(--ink);background:transparent;display:grid;place-items:center}
+.stepper button svg{width:13px;height:13px}
+.stepper button:hover{background:var(--paper-hi)}
+.stepper output{font-family:var(--font-hand);font-weight:700;font-size:1.35rem;min-width:2ch;text-align:center;line-height:1}
+.unit{font-size:.68rem;color:var(--ink-soft);width:2.4em}
+.switch-row{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.8rem;padding:2px 0 8px;border-bottom:1.4px dashed var(--line);cursor:pointer}
+.switch{appearance:none;-webkit-appearance:none;flex:none;margin:0;width:36px;height:20px;border-radius:999px;border:1.8px solid var(--ink);background:transparent;position:relative;cursor:pointer;transition:background .2s}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:12px;height:12px;border-radius:50%;background:var(--ink);transition:transform .2s}
+.switch:checked{background:var(--btn-bg)}
+.switch:checked::after{transform:translateX(16px);background:var(--btn-fg)}
+.seg{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;border:1.6px solid var(--ink);border-radius:999px;overflow:hidden}
+.seg-sm{flex:none}
+.seg.seg-sm button{padding:4px 12px;white-space:nowrap}
+.seg button{border:0;background:none;padding:5px 0;font-size:.74rem}
+.seg button+button{border-left:1.4px solid var(--line)}
+.seg button[aria-checked="true"]{background:var(--btn-bg);color:var(--btn-fg);text-shadow:none}
+
+/* color swatches */
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 4px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:3px 0;border-radius:12px;font-size:.64rem;color:var(--ink-soft)}
+.sw-dot{position:relative;width:30px;height:30px;border-radius:50%;background:var(--sw-paper);border:2px solid var(--sw-ink);transition:transform .15s}
+.sw-dot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sw-ink)}
+.sw:hover .sw-dot{transform:scale(1.08) rotate(-6deg)}
+.sw[aria-checked="true"]{color:var(--ink);font-weight:700}
+.sw[aria-checked="true"] .sw-dot{box-shadow:0 0 0 2.5px var(--paper-hi),0 0 0 4.5px var(--ink)}
+
+/* mini */
+.mini{display:flex;align-items:center;gap:8px;padding:8px 10px 8px 12px;border-radius:26px 22px 28px 20px / 22px 28px 20px 26px}
+.mini::before{inset:5px}
+.mini .bunny{width:40px;height:44px}
+.mini-time{font-family:var(--font-hand);font-weight:700;font-size:2.1rem;line-height:1;display:flex}
+.mini-time span{display:inline-block;width:.52em;text-align:center}
+.mini-time .colon{width:.26em}
+.mini .go{flex:none;width:36px;height:36px;padding:0;font-size:1rem;box-shadow:none}
+.mini .go svg{width:14px;height:14px}
+
+/* install button */
+.top-right{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap}
+.install{display:flex;align-items:center;gap:6px;border:1.6px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px 4px 9px;font-size:.78rem}
+.install svg{width:15px;height:15px}
+.install:hover{background:var(--paper-hi)}
+
+/* water + stretch nudges */
+.nudge{
+  display:flex;align-items:center;gap:8px;padding:7px 6px 7px 9px;
+  border:1.8px dashed var(--ink);border-radius:16px 13px 17px 12px / 13px 17px 12px 16px;
+  background:var(--paper-hi);animation:nudge-in .5s cubic-bezier(.3,1.6,.5,1);
+}
+.nudge-ico{flex:none;width:26px;height:26px}
+.nudge-text{flex:1;min-width:0;display:flex;flex-direction:column;line-height:1.2}
+.nudge-text strong{font-family:var(--font-hand);font-weight:700;font-size:1.15rem}
+.nudge-text span{font-size:.72rem;color:var(--ink-soft)}
+.nudge-done{flex:none;border:0;border-radius:999px;background:var(--btn-bg);color:var(--btn-fg);font-family:var(--font-hand);font-weight:700;font-size:1rem;padding:4px 12px;text-shadow:none}
+.nudge-later{width:28px;height:28px}
+.mini-nudge{animation:pulse 1.4s ease-in-out infinite;opacity:1}
+@keyframes nudge-in{from{transform:scale(.85) rotate(-2deg);opacity:0}}
+@keyframes pulse{50%{transform:scale(1.18)}}
+
+/* shown in the page while the timer floats */
+.floating-note{max-width:300px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px;padding:28px 22px;border:2px dashed var(--line);border-radius:28px 24px 30px 22px / 24px 30px 22px 28px}
+.fn-title{margin:0;font-family:var(--font-hand);font-weight:700;font-size:1.7rem;line-height:1}
+.fn-sub{margin:0;font-size:.8rem;color:var(--ink-soft);line-height:1.55}
+.floating-note .go{flex:none;height:40px;padding:0 20px;font-size:1.15rem}
+
+/* inside the floating window */
+body.pip{min-height:100%;background:var(--desk)}
+body.pip .stage{min-height:100vh;display:grid;place-items:center;padding:16px 10px 10px}
+body.pip.is-mini .stage{padding:6px}
+
+/* inside the Mac app: only the card shows, on a see-through window */
+html.in-app,html.in-app body{background:transparent!important;height:auto;min-height:0;overflow:hidden}
+.in-app .desk{display:block;min-height:0;padding:0;background:none;overflow:visible}
+.in-app .topbar,.in-app .hint,.in-app .doodles,.in-app .floating-note{display:none!important}
+.in-app .stage{display:inline-block;width:auto;padding:20px 18px 26px}
+.in-app .card{width:304px}
+.in-app .tape,.in-app .bunny-wrap,.in-app .time,.in-app .phase-row,.in-app .mini .bunny,.in-app .mini-time{cursor:grab}
+/* the Mac app paints real frosted glass behind the card, so the tint can be light */
+html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+<svg class="defs" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="wobble" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="4" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <filter id="wobble-lg" x="-5%" y="-5%" width="110%" height="110%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018" numOctaves="2" seed="9" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="4" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <!-- line icons -->
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.8 L18 12 L8 18.2 Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8.5 6v12M15.5 6v12" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-skip" viewBox="0 0 24 24"><path d="M6 6.5 L14.5 12 L6 17.5 Z" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M18 6.5v11" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 12.5a6.5 6.5 0 1 0 2-4.9"/><path d="M5 4.5v4h4"/></g></symbol>
+  <symbol id="i-speaker" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M15.5 9.5a3.5 3.5 0 0 1 0 5"/><path d="M18 7a7 7 0 0 1 0 10"/></g></symbol>
+  <symbol id="i-muted" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9.5h3.5L12 6v12l-4.5-3.5H4z"/><path d="M16 9.5l5 5M21 9.5l-5 5"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19 14.5A7.5 7.5 0 1 1 9.5 5a6 6 0 0 0 9.5 9.5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4.5a7.5 7.5 0 0 1 0 15z" fill="currentColor"/></symbol>
+  <symbol id="i-glass" viewBox="0 0 24 24"><path d="M12 3.5 Q13.2 10.8 20.5 12 Q13.2 13.2 12 20.5 Q10.8 13.2 3.5 12 Q10.8 10.8 12 3.5 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-shrink" viewBox="0 0 24 24"><path d="M4 14h6v6M20 10h-6V4M10 14l-6 6M14 10l6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-expand" viewBox="0 0 24 24"><path d="M14 4h6v6M10 20H4v-6M20 4l-6 6M4 20l6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-tune" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7.5h9M17.5 7.5H20M4 16.5h2.5M11 16.5h9"/><circle cx="15.2" cy="7.5" r="2.2"/><circle cx="8.8" cy="16.5" r="2.2"/></g></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7L7 17" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5.5 12.5l4.2 4.2L18.5 7.5" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></symbol>
+  <symbol id="i-water" viewBox="0 0 24 24"><path d="M12 3.5 C9 8 6.5 11 6.5 14.5 a5.5 5.5 0 0 0 11 0 C17.5 11 15 8 12 3.5 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9.5 15 a2.6 2.6 0 0 0 2.4 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-stretch" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5.5" r="2"/><path d="M5 3.5 L12 9.5 L19 3.5 M12 9.5 V15 M12 15 L8 20.5 M12 15 L16 20.5"/></g></symbol>
+  <symbol id="i-float" viewBox="0 0 24 24"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><rect x="11.5" y="11" width="6.5" height="5" rx="1.2" fill="currentColor"/></symbol>
+  <symbol id="i-dock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="2.5"/><path d="M15 9 L9.5 14.5 M9.5 10 V14.5 H14"/></g></symbol>
+  <symbol id="i-later" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="7"/><path d="M12 9.5 V13 L14.5 14.5 M5 5 L7.5 3 M19 5 L16.5 3"/></g></symbol>
+  <symbol id="i-install" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 V14 M8 10.5 L12 14.5 L16 10.5"/><path d="M5 15.5 V18.5 H19 V15.5"/></g></symbol>
+  <!-- desk doodles -->
+  <symbol id="d-star" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M20 5 L24 15 L35 16 L26.5 23 L29.5 34 L20 28 L10.5 34 L13.5 23 L5 16 L16 15 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="d-heart" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M20 33 C8 25 4 18 7 12 C10 6 17 7 20 13 C23 7 30 6 33 12 C36 18 32 25 20 33 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="d-yarn" viewBox="0 0 40 40"><g filter="url(#wobble)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="19" r="11"/><path d="M9.5 12.5 C15 15 21 21 23.5 29.5 M12 27.5 C16 21 22 15.5 27.5 12.5 M7.5 20 C14 18.5 22 19 29 22"/><path d="M26 27.5 C30 32 33 34 37 32.5"/></g></symbol>
+  <symbol id="d-fish" viewBox="0 0 40 40"><g filter="url(#wobble)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 20 C10 12.5 20 11.5 27 20 C20 28.5 10 27.5 5 20 Z"/><path d="M27 20 L35 13.5 L34 26.5 Z"/><path d="M19 15.5 C17.5 18.5 17.5 21.5 19 24.5"/><circle cx="10.5" cy="19" r="1.2" fill="currentColor" stroke="none"/></g></symbol>
+  <symbol id="i-paw" viewBox="0 0 24 24"><g fill="currentColor"><ellipse cx="12" cy="16" rx="5.4" ry="4.6"/><circle cx="5.2" cy="10.2" r="2.4"/><circle cx="9.2" cy="6" r="2.5"/><circle cx="14.8" cy="6" r="2.5"/><circle cx="18.8" cy="10.2" r="2.4"/></g></symbol>
+  <symbol id="d-tomato" viewBox="0 0 40 40"><g filter="url(#wobble)" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12 C29 12 34 18 33 25 C32 32 26 35 20 35 C14 35 8 32 7 25 C6 18 11 12 20 12 Z"/><path d="M20 13 L16.5 8.5 M20 13 L23.5 8.5 M20 13 L14 13.5 M20 13 L26 13.5 M20 12.5 L20.5 5.5"/></g></symbol>
+  <symbol id="d-sparkle" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M20 6 Q21.5 18.5 34 20 Q21.5 21.5 20 34 Q18.5 21.5 6 20 Q18.5 18.5 20 6 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="d-cloud" viewBox="0 0 40 40"><path filter="url(#wobble)" d="M10 28 C5 28 4 21 9 20 C9 14 16 12 19 16 C21 11 30 11 31 18 C36 18 37 28 31 28 Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+</svg>
+
+<div class="desk">
+  <div class="doodles" aria-hidden="true">
+    <svg class="dd" style="top:9%;left:6%;--s:46px;--r:-12deg"><use href="#d-star"/></svg>
+    <svg class="dd" style="top:13%;right:8%;--s:58px;--r:8deg"><use href="#d-tomato"/></svg>
+    <svg class="dd" style="top:58%;left:4%;--s:42px;--r:-6deg"><use href="#d-heart"/></svg>
+    <svg class="dd" style="bottom:9%;right:6%;--s:64px;--r:-8deg"><use href="#d-yarn"/></svg>
+    <svg class="dd" style="bottom:4%;left:7%;--s:20px;--r:28deg"><use href="#i-paw"/></svg>
+    <svg class="dd" style="bottom:8%;left:10.5%;--s:20px;--r:28deg"><use href="#i-paw"/></svg>
+    <svg class="dd" style="bottom:12.5%;left:9%;--s:20px;--r:28deg"><use href="#i-paw"/></svg>
+    <svg class="dd" style="bottom:16.5%;left:12.5%;--s:20px;--r:28deg"><use href="#i-paw"/></svg>
+    <svg class="dd" style="top:36%;right:21%;--s:30px"><use href="#d-sparkle"/></svg>
+    <svg class="dd" style="top:27%;left:17%;--s:64px"><use href="#d-cloud"/></svg>
+    <svg class="dd" style="bottom:15%;left:19%;--s:26px"><use href="#d-sparkle"/></svg>
+    <svg class="dd" style="bottom:31%;right:14%;--s:54px;--r:-12deg"><use href="#d-fish"/></svg>
+    <svg class="dd" style="top:36%;left:calc(50% - 120px);--s:96px;--r:-10deg"><use href="#d-tomato"/></svg>
+    <svg class="dd" style="top:58%;left:calc(50% + 20px);--s:78px;--r:12deg"><use href="#d-heart"/></svg>
+    <svg class="dd" style="top:20%;left:calc(50% + 10px);--s:84px"><use href="#d-cloud"/></svg>
+  </div>
+
+  <header class="topbar">
+    <h1 class="brand"><span class="wordmark">pawmodoro<svg class="wm-paw" aria-hidden="true"><use href="#i-paw"/></svg></span><span class="tag" id="tag">a tiny focus timer with a cat buddy</span></h1>
+    <div class="top-right">
+      <p class="today" id="today">Today: 0 pomodoros · 0 min focused</p>
+      <a class="install" id="mac-link" href="../"><svg aria-hidden="true"><use href="#i-paw"/></svg>Get the Mac app</a>
+      <button class="install" id="install" type="button" hidden><svg aria-hidden="true"><use href="#i-install"/></svg>Install app</button>
+    </div>
+  </header>
+
+  <main class="stage">
+    <section class="card" id="card" aria-label="Pomodoro timer" data-running="false">
+      <span class="tape" aria-hidden="true"></span>
+      <div class="bunny-wrap">
+        <svg class="bunny" id="bunny" data-state="idle" data-buddy="cat" viewBox="0 0 120 100" role="img" aria-label="Your focus buddy">
+          <g class="bun" filter="url(#wobble)">
+            <!-- cat ears -->
+            <g class="only-cat">
+              <path d="M39.7,41.9 C38.5,34 38,26 39,20.5 C39.5,18 41.5,17.8 43,19.2 C46.5,23 50,28 52.5,33.8"/>
+              <path class="ear-r" d="M67.5,33.8 C70,28 73.5,23 77,19.2 C78.5,17.8 80.5,18 81,20.5 C82,26 81.5,34 80.3,41.9"/>
+              <path class="nofill" d="M42.3,24.5 C42,29 42.5,32.5 44,35"/>
+              <path class="nofill" d="M77.7,24.5 C78,29 77.5,32.5 76,35"/>
+            </g>
+            <!-- cat tail sits behind the body; it swaps sides on breaks to make room for the mug -->
+            <g class="only-cat" data-show="idle cheer sip stretch"><path class="nofill" d="M74.5,88 C88,91 95,85 93,78 C92,74.5 88.5,75 88.5,78"/></g>
+            <g class="only-cat" data-show="break"><path class="nofill" d="M45.5,88 C32,91 25,85 27,78 C28,74.5 31.5,75 31.5,78"/></g>
+            <!-- bunny ears -->
+            <g class="only-bunny" data-show="idle focus cheer sip stretch">
+              <path d="M48,36 C41,26 39,12 45,7 C51,3 57,16 57,33.5"/>
+              <path class="ear-r" d="M64,33.4 C66,18 72,5 79,8 C85,11 81,25 74,36.4"/>
+              <path class="nofill" d="M47,26 C45.5,20 45.5,15 47.5,12"/>
+              <path class="nofill" d="M76.5,14 C76.5,19 75,24 72.5,28"/>
+            </g>
+            <g class="only-bunny" data-show="break">
+              <path d="M48,36 C41,26 39,12 45,7 C51,3 57,16 57,33.5"/>
+              <path d="M64,33.4 C67,25 72,21 79,20 C86,19 91,25 88.5,30.5 C86,35 80,34 74,36.4"/>
+              <path class="nofill" d="M47,26 C45.5,20 45.5,15 47.5,12"/>
+              <path class="nofill" d="M77,24.5 C81,23.5 84,25 85,27.5"/>
+            </g>
+            <!-- raised arms (cheering or stretching) sit behind the body -->
+            <g data-show="cheer stretch">
+              <path class="nofill" d="M43.5,73 Q33,68 31,56.5"/>
+              <path class="nofill" d="M76.5,73 Q87,68 89,56.5"/>
+              <ellipse cx="30.5" cy="53.5" rx="3.8" ry="3.4"/>
+              <ellipse cx="89.5" cy="53.5" rx="3.8" ry="3.4"/>
+            </g>
+            <!-- body + feet -->
+            <g data-show="idle break cheer sip stretch">
+              <path d="M44,69 C41,80 44,92 60,92 C76,92 79,80 76,69"/>
+              <ellipse cx="51" cy="91.5" rx="5.5" ry="3"/>
+              <ellipse cx="69" cy="91.5" rx="5.5" ry="3"/>
+            </g>
+            <g data-show="idle break">
+              <path class="nofill" d="M52,79 q2,3 4,0"/>
+              <path class="nofill" d="M64,79 q2,3 4,0"/>
+            </g>
+            <!-- head -->
+            <path d="M36,54 C36,40 47,33 60,33 C73,33 84,40 84,54 C84,66 73,72 60,72 C47,72 36,66 36,54 Z"/>
+            <g class="blush"><ellipse cx="45.5" cy="58" rx="3.6" ry="2.1"/><ellipse cx="74.5" cy="58" rx="3.6" ry="2.1"/></g>
+            <!-- cat: tabby stripes, nose, whiskers -->
+            <g class="only-cat" style="stroke-width:1.6">
+              <path class="nofill" d="M56.5,37.5 l.6,3.6 M60,36.5 v4 M63.5,37.5 l-.6,3.6"/>
+              <path class="ink" d="M58.4,54.4 L61.6,54.4 L60,56.3 Z"/>
+            </g>
+            <g class="only-cat" data-show="idle focus break sip" style="stroke-width:1.6">
+              <path class="nofill" d="M37.5,55 L28.5,53.2 M37.5,58.5 L29,60.4 M82.5,55 L91.5,53.2 M82.5,58.5 L91,60.4"/>
+            </g>
+            <!-- idle face -->
+            <g data-show="idle">
+              <circle class="ink" cx="51" cy="52" r="2.3"/><circle class="ink" cx="69" cy="52" r="2.3"/>
+              <path class="nofill" d="M57,57.5 q1.5,2 3,0 q1.5,2 3,0"/>
+            </g>
+            <!-- focus face + book -->
+            <g data-show="focus">
+              <path class="nofill" d="M47,47.5 L54,49.8"/><path class="nofill" d="M73,47.5 L66,49.8"/>
+              <circle class="ink" cx="51" cy="53.5" r="2.1"/><circle class="ink" cx="69" cy="53.5" r="2.1"/>
+              <path class="nofill" d="M58,60 q2,-1.4 4,0"/>
+              <path d="M38,73 L60,77 L82,73 L82,89 L60,93 L38,89 Z"/>
+              <path class="nofill" d="M60,77 L60,93"/>
+              <path class="nofill" d="M43,78.5 L55,80.6 M43,82.5 L55,84.6" style="stroke-width:1.6"/>
+              <path class="ink" d="M71,87 c-3,-2 -4.2,-4 -2.4,-5.4 c1,-.7 2.2,-.1 2.4,1 c.2,-1.1 1.4,-1.7 2.4,-1 c1.8,1.4 .6,3.4 -2.4,5.4z"/>
+              <ellipse cx="39.5" cy="74" rx="4.2" ry="3.4"/><ellipse cx="80.5" cy="74" rx="4.2" ry="3.4"/>
+            </g>
+            <!-- break: sleepy face, tea, z's -->
+            <g data-show="break">
+              <path class="nofill" d="M47.5,53 q3.5,3 7,0"/><path class="nofill" d="M65.5,53 q3.5,3 7,0"/>
+              <ellipse class="nofill" cx="60" cy="59.5" rx="1.6" ry="1.9"/>
+              <path d="M83,77 L97,77 L96,88 Q95.5,92 91,92 L89,92 Q84.5,92 84,88 Z"/>
+              <path class="nofill" d="M96.6,80 q5,-.2 4.6,4 q-.4,3.6 -5.2,3.4"/>
+              <path class="nofill steam" d="M87.5,73 q-2,-3 0,-6 q2,-3 0,-6" style="stroke-width:1.8"/>
+              <path class="nofill steam s2" d="M92.5,73 q-2,-3 0,-6 q2,-3 0,-6" style="stroke-width:1.8"/>
+              <text class="z" x="22" y="36" font-size="13">z</text>
+              <text class="z z2" x="29" y="26" font-size="10">z</text>
+            </g>
+            <!-- sip: holding a glass of water with a straw -->
+            <g data-show="sip">
+              <circle class="ink" cx="51" cy="53" r="2.2"/><circle class="ink" cx="69" cy="53" r="2.2"/>
+              <ellipse class="nofill" cx="60" cy="61" rx="1.7" ry="1.6"/>
+              <path class="nofill" d="M61.5,75 L60.6,62.8" style="stroke-width:2"/>
+              <path d="M51.5,74 L68.5,74 L66.8,92 L53.2,92 Z"/>
+              <path class="nofill" d="M52.4,80.5 L67.6,80.5" style="stroke-width:1.6"/>
+              <ellipse cx="51.5" cy="82" rx="3.8" ry="3.3"/><ellipse cx="68.5" cy="82" rx="3.8" ry="3.3"/>
+              <path class="ink" d="M101,57 c-2,3 -3,4.6 -3,6 a3,3 0 0 0 6,0 c0,-1.4 -1,-3 -3,-6z"/>
+              <path class="ink" d="M20,64 c-1.5,2.2 -2.2,3.4 -2.2,4.4 a2.2,2.2 0 0 0 4.4,0 c0,-1 -.7,-2.2 -2.2,-4.4z"/>
+            </g>
+            <!-- stretch: arms up, eyes squeezed shut -->
+            <g data-show="stretch">
+              <path class="nofill" d="M48,50.5 L53.5,53 L48,55.5"/><path class="nofill" d="M72,50.5 L66.5,53 L72,55.5"/>
+              <ellipse class="nofill" cx="60" cy="60.5" rx="2" ry="2.4"/>
+              <path class="nofill" d="M21,47 l-4,-2 M22.5,41.5 l-3.5,-3.5 M99,47 l4,-2 M97.5,41.5 l3.5,-3.5" style="stroke-width:1.8"/>
+            </g>
+            <!-- cheer: happy face + sparkles -->
+            <g data-show="cheer">
+              <path class="nofill" d="M47.5,54 L51,50.5 L54.5,54"/><path class="nofill" d="M65.5,54 L69,50.5 L72.5,54"/>
+              <path class="inkfill" d="M56,57.5 Q60,64.5 64,57.5 Z"/>
+              <g transform="translate(17 27)"><path class="spark ink" d="M0,-7 Q1.2,-1.2 7,0 Q1.2,1.2 0,7 Q-1.2,1.2 -7,0 Q-1.2,-1.2 0,-7 Z"/></g>
+              <g transform="translate(102 23)"><path class="spark ink" style="animation-delay:-.45s" d="M0,-8 Q1.4,-1.4 8,0 Q1.4,1.4 0,8 Q-1.4,1.4 -8,0 Q-1.4,-1.4 0,-8 Z"/></g>
+              <g transform="translate(105 63)"><path class="spark ink" style="animation-delay:-.2s" d="M0,-5 Q1,-1 5,0 Q1,1 0,5 Q-1,1 -5,0 Q-1,-1 0,-5 Z"/></g>
+              <g transform="translate(14 70)"><path class="spark ink" style="animation-delay:-.65s" d="M0,-5 Q1,-1 5,0 Q1,1 0,5 Q-1,1 -5,0 Q-1,-1 0,-5 Z"/></g>
+            </g>
+          </g>
+        </svg>
+        <p class="bubble" id="bubble" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="face" id="face-main">
+        <div class="time" id="time" role="timer" aria-label="Time left"></div>
+        <div class="phase-row">
+          <span class="phase" id="phase">Focus</span>
+          <span class="dots" id="dots" role="img"></span>
+        </div>
+
+        <ul class="tasks" id="tasks" aria-label="Tasks"></ul>
+        <p class="empty" id="empty" hidden>No tasks yet. Add one, or just focus.</p>
+        <div class="done-row" id="done-row">
+          <button class="link done-toggle" id="done-toggle" type="button" aria-expanded="false" aria-controls="done-list">
+            <svg aria-hidden="true"><use href="#i-chev"/></svg><span id="done-count">0 done</span>
+          </button>
+          <button class="link" id="clear-done" type="button">Clear</button>
+        </div>
+        <ul class="tasks" id="done-list" aria-label="Finished tasks" hidden></ul>
+        <form class="add" id="add-form" autocomplete="off">
+          <button class="add-btn" id="add-btn" type="button"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add task</button>
+          <input class="add-input" id="add-input" type="text" maxlength="80" placeholder="What are you working on?" aria-label="New task" hidden>
+        </form>
+
+        <div class="nudge" id="nudge" role="status" aria-live="polite" hidden>
+          <svg class="nudge-ico" aria-hidden="true"><use href="#i-water"/></svg>
+          <div class="nudge-text"><strong id="nudge-title">Water time</strong><span id="nudge-sub">A few sips, then back to it</span></div>
+          <button class="nudge-done" id="nudge-done" type="button">Done</button>
+          <button class="icon nudge-later" id="nudge-later" type="button" aria-label="Remind me in 10 minutes" title="Remind me in 10 min"><svg aria-hidden="true"><use href="#i-later"/></svg></button>
+        </div>
+
+        <div class="controls">
+          <button class="go" id="go" type="button"><svg aria-hidden="true"><use href="#i-play"/></svg><span id="go-label">Start</span></button>
+          <button class="round" id="skip" type="button" aria-label="Skip to the next timer" title="Skip"><svg aria-hidden="true"><use href="#i-skip"/></svg></button>
+          <button class="round" id="reset" type="button" aria-label="Reset this timer" title="Reset"><svg aria-hidden="true"><use href="#i-reset"/></svg></button>
+        </div>
+      </div>
+
+      <div class="face settings" id="face-settings" hidden>
+        <h2>Settings</h2>
+        <div class="setting"><span>Focus</span>
+          <div class="stepper" data-key="focus"><button type="button" data-d="-1" aria-label="Shorter focus"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-focus">25</output><button type="button" data-d="1" aria-label="Longer focus"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">min</span></div>
+        </div>
+        <div class="setting"><span>Short break</span>
+          <div class="stepper" data-key="short"><button type="button" data-d="-1" aria-label="Shorter short break"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-short">5</output><button type="button" data-d="1" aria-label="Longer short break"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">min</span></div>
+        </div>
+        <div class="setting"><span>Long break</span>
+          <div class="stepper" data-key="long"><button type="button" data-d="-1" aria-label="Shorter long break"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-long">15</output><button type="button" data-d="1" aria-label="Longer long break"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">min</span></div>
+        </div>
+        <div class="setting"><span>Long break after</span>
+          <div class="stepper" data-key="every"><button type="button" data-d="-1" aria-label="Fewer sessions"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-every">4</output><button type="button" data-d="1" aria-label="More sessions"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">focus</span></div>
+        </div>
+        <div class="setting"><span>Water nudge every</span>
+          <div class="stepper" data-key="water"><button type="button" data-d="-1" aria-label="Water nudges more often"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-water">45</output><button type="button" data-d="1" aria-label="Water nudges less often"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit" id="unit-water">min</span></div>
+        </div>
+        <div class="setting"><span>Stretch nudge every</span>
+          <div class="stepper" data-key="stretch"><button type="button" data-d="-1" aria-label="Stretch nudges more often"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-stretch">60</output><button type="button" data-d="1" aria-label="Stretch nudges less often"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit" id="unit-stretch">min</span></div>
+        </div>
+        <label class="switch-row" for="auto"><span>Start the next timer on its own</span><input class="switch" type="checkbox" id="auto"></label>
+        <label class="switch-row" for="notify"><span>Desktop notifications</span><input class="switch" type="checkbox" id="notify"></label>
+        <div class="setting"><span>Focus buddy</span>
+          <div class="seg seg-sm" id="buddy-seg" role="radiogroup" aria-label="Focus buddy">
+            <button type="button" role="radio" data-buddy="cat">Cat</button>
+            <button type="button" role="radio" data-buddy="bunny">Bunny</button>
+          </div>
+        </div>
+        <div class="setting stack"><span>Colors</span>
+          <div class="swatches" id="seg" role="radiogroup" aria-label="Colors">
+            <button type="button" class="sw" role="radio" data-look="auto" title="Strawberry by day, Midnight at night" style="--sw-paper:linear-gradient(135deg,#FFE3EC 50%,#252B63 50%);--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">Auto</span></button>
+            <button type="button" class="sw" role="radio" data-look="strawberry" style="--sw-paper:#FFE3EC;--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">Strawberry</span></button>
+            <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">Matcha</span></button>
+            <button type="button" class="sw" role="radio" data-look="blueberry" style="--sw-paper:#E5EAFF;--sw-ink:#3B4CC0"><span class="sw-dot"></span><span class="sw-name">Blueberry</span></button>
+            <button type="button" class="sw" role="radio" data-look="lavender" style="--sw-paper:#EEE4FF;--sw-ink:#6A3FB5"><span class="sw-dot"></span><span class="sw-name">Taro</span></button>
+            <button type="button" class="sw" role="radio" data-look="peach" style="--sw-paper:#FFE7D5;--sw-ink:#B0462A"><span class="sw-dot"></span><span class="sw-name">Peach</span></button>
+            <button type="button" class="sw" role="radio" data-look="midnight" style="--sw-paper:#252B63;--sw-ink:#FFE7A8"><span class="sw-dot"></span><span class="sw-name">Midnight</span></button>
+            <button type="button" class="sw" role="radio" data-look="glass" style="--sw-paper:linear-gradient(135deg,#FF9DC0,#9A86C9 55%,#8FD8C8);--sw-ink:#FFFFFF"><span class="sw-dot"></span><span class="sw-name">Glass</span></button>
+          </div>
+        </div>
+        <button class="go" id="settings-done" type="button">Done</button>
+      </div>
+
+      <footer class="bar">
+        <button class="icon" id="mute" type="button" aria-label="Mute sounds" title="Sound"><svg aria-hidden="true"><use href="#i-speaker"/></svg></button>
+        <input class="vol" id="vol" type="range" min="0" max="100" value="60" aria-label="Sound volume">
+        <span class="spacer"></span>
+        <button class="icon" id="float-btn" type="button" aria-label="Float on top of your screen" title="Float on top"><svg aria-hidden="true"><use href="#i-float"/></svg></button>
+        <button class="icon" id="look" type="button" aria-label="Theme" title="Theme"><svg aria-hidden="true"><use href="#i-auto"/></svg></button>
+        <button class="icon" id="mini-btn" type="button" aria-label="Shrink to mini timer" title="Mini mode"><svg aria-hidden="true"><use href="#i-shrink"/></svg></button>
+        <button class="icon" id="settings-btn" type="button" aria-label="Settings" aria-pressed="false" title="Settings"><svg aria-hidden="true"><use href="#i-tune"/></svg></button>
+        <button class="icon" id="hide-btn" type="button" aria-label="Hide. Click the paw in the menu bar to bring it back" title="Hide" hidden><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+      </footer>
+    </section>
+
+    <section class="mini" id="mini" aria-label="Mini timer" hidden>
+      <svg class="bunny" id="mini-bun" data-state="idle" data-buddy="cat" viewBox="32 2 56 72" aria-hidden="true">
+        <g class="bun" filter="url(#wobble)" style="stroke-width:2.8">
+          <g class="only-bunny">
+            <path d="M48,36 C41,26 39,12 45,7 C51,3 57,16 57,33.5"/>
+            <path d="M64,33.4 C66,18 72,5 79,8 C85,11 81,25 74,36.4"/>
+          </g>
+          <g class="only-cat">
+            <path d="M39.7,41.9 C38.5,34 38,26 39,20.5 C39.5,18 41.5,17.8 43,19.2 C46.5,23 50,28 52.5,33.8"/>
+            <path d="M67.5,33.8 C70,28 73.5,23 77,19.2 C78.5,17.8 80.5,18 81,20.5 C82,26 81.5,34 80.3,41.9"/>
+          </g>
+          <path d="M36,54 C36,40 47,33 60,33 C73,33 84,40 84,54 C84,66 73,72 60,72 C47,72 36,66 36,54 Z"/>
+          <g class="blush"><ellipse cx="45.5" cy="58" rx="3.6" ry="2.1"/><ellipse cx="74.5" cy="58" rx="3.6" ry="2.1"/></g>
+          <path class="ink only-cat" d="M58.2,55 L61.8,55 L60,57.2 Z"/>
+          <g data-show="idle focus sip"><circle class="ink" cx="51" cy="52" r="2.6"/><circle class="ink" cx="69" cy="52" r="2.6"/></g>
+          <g data-show="break"><path class="nofill" d="M47.5,53 q3.5,3 7,0"/><path class="nofill" d="M65.5,53 q3.5,3 7,0"/></g>
+          <g data-show="cheer stretch"><path class="nofill" d="M47.5,54 L51,50.5 L54.5,54"/><path class="nofill" d="M65.5,54 L69,50.5 L72.5,54"/></g>
+        </g>
+      </svg>
+      <div class="mini-time" id="mini-time" role="timer" aria-label="Time left"></div>
+      <button class="icon mini-nudge" id="mini-nudge" type="button" aria-label="Done" hidden><svg aria-hidden="true"><use href="#i-water"/></svg></button>
+      <button class="go" id="mini-go" type="button" aria-label="Start"><svg aria-hidden="true"><use href="#i-play"/></svg></button>
+      <button class="icon" id="mini-float" type="button" aria-label="Float on top of your screen" title="Float on top"><svg aria-hidden="true"><use href="#i-float"/></svg></button>
+      <button class="icon" id="mini-expand" type="button" aria-label="Open the full timer" title="Full timer"><svg aria-hidden="true"><use href="#i-expand"/></svg></button>
+    </section>
+
+    <div class="floating-note" id="floating-note" hidden>
+      <p class="fn-title">Your timer is floating</p>
+      <p class="fn-sub">It stays on top of every window, even other apps. Close the little window, or press the button below, to bring it back.</p>
+      <button class="go" id="unfloat" type="button">Bring it back here</button>
+    </div>
+  </main>
+
+  <p class="hint"><kbd>Space</kbd> starts or pauses. The float button keeps <span id="hint-buddy">your cat</span> on top of every window in Chrome and Edge. Water and stretch nudges count while the timer runs.</p>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>

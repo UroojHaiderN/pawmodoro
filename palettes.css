@@ -1,0 +1,246 @@
+/* Pawmodoro color palettes, shared by the landing page and the timer app. */
+:root{
+  --desk:#FFF4F7;
+  --blob-a:#FFD3E1;
+  --blob-b:#FFEBC2;
+  --doodle:rgba(194,42,94,0.16);
+  --paper:#FFE3EC;
+  --paper-hi:#FFCCDC;
+  --thumb:#FFE3EC;
+  --ink:#C22A5E;
+  --ink-soft:rgba(194,42,94,0.8);
+  --line:rgba(194,42,94,0.3);
+  --btn-bg:#C22A5E;
+  --btn-fg:#FFF4F7;
+  --blush:#FF8FB1;
+  --bunny-fill:#FFE3EC;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(194,42,94,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(150,220,196,.85);
+  --grid:rgba(194,42,94,0.11);
+  --font-hand:"Gaegu","Chalkboard SE","Comic Sans MS",cursive;
+  --font-ui:"M PLUS Rounded 1c","Hiragino Maru Gothic ProN","Arial Rounded MT Bold",ui-rounded,system-ui,sans-serif;
+  --paw:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cellipse cx='12' cy='16' rx='5.4' ry='4.6'/%3E%3Ccircle cx='5.2' cy='10.2' r='2.4'/%3E%3Ccircle cx='9.2' cy='6' r='2.5'/%3E%3Ccircle cx='14.8' cy='6' r='2.5'/%3E%3Ccircle cx='18.8' cy='10.2' r='2.4'/%3E%3C/svg%3E");
+}
+@media (prefers-color-scheme: dark){
+:root:not([data-theme="light"]){
+  --desk:#131938;
+  --blob-a:#272E6B;
+  --blob-b:#3A2560;
+  --doodle:rgba(255,231,168,0.14);
+  --paper:#252B63;
+  --paper-hi:#313A7C;
+  --thumb:#252B63;
+  --ink:#FFE7A8;
+  --ink-soft:rgba(255,231,168,0.76);
+  --line:rgba(255,231,168,0.3);
+  --btn-bg:#FFE7A8;
+  --btn-fg:#252B63;
+  --blush:#FF9EC0;
+  --bunny-fill:#252B63;
+  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
+  --glass:none;
+  --grain:0.3;
+  --grain-blend:screen;
+  --tshadow:none;
+  --tape:rgba(255,158,192,.62);
+  --grid:rgba(255,231,168,0.09);
+  color-scheme:dark;
+}
+}
+:root[data-theme="dark"]{
+  --desk:#131938;
+  --blob-a:#272E6B;
+  --blob-b:#3A2560;
+  --doodle:rgba(255,231,168,0.14);
+  --paper:#252B63;
+  --paper-hi:#313A7C;
+  --thumb:#252B63;
+  --ink:#FFE7A8;
+  --ink-soft:rgba(255,231,168,0.76);
+  --line:rgba(255,231,168,0.3);
+  --btn-bg:#FFE7A8;
+  --btn-fg:#252B63;
+  --blush:#FF9EC0;
+  --bunny-fill:#252B63;
+  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
+  --glass:none;
+  --grain:0.3;
+  --grain-blend:screen;
+  --tshadow:none;
+  --tape:rgba(255,158,192,.62);
+  --grid:rgba(255,231,168,0.09);
+  color-scheme:dark;
+}
+/* The app's own color picker wins over the viewer's theme when set */
+:root[data-look="strawberry"]{
+  --desk:#FFF4F7;
+  --blob-a:#FFD3E1;
+  --blob-b:#FFEBC2;
+  --doodle:rgba(194,42,94,0.16);
+  --paper:#FFE3EC;
+  --paper-hi:#FFCCDC;
+  --thumb:#FFE3EC;
+  --ink:#C22A5E;
+  --ink-soft:rgba(194,42,94,0.8);
+  --line:rgba(194,42,94,0.3);
+  --btn-bg:#C22A5E;
+  --btn-fg:#FFF4F7;
+  --blush:#FF8FB1;
+  --bunny-fill:#FFE3EC;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(194,42,94,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(150,220,196,.85);
+  --grid:rgba(194,42,94,0.11);
+  color-scheme:light;
+}
+:root[data-look="matcha"]{
+  --desk:#F5F9EF;
+  --blob-a:#DCEFD0;
+  --blob-b:#FFE3EA;
+  --doodle:rgba(54,110,58,0.16);
+  --paper:#E6F3DA;
+  --paper-hi:#D3EAC2;
+  --thumb:#E6F3DA;
+  --ink:#366E3A;
+  --ink-soft:rgba(54,110,58,0.8);
+  --line:rgba(54,110,58,0.3);
+  --btn-bg:#366E3A;
+  --btn-fg:#F5FBF0;
+  --blush:#F7A6B8;
+  --bunny-fill:#E6F3DA;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(54,110,58,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(247,166,184,.85);
+  --grid:rgba(54,110,58,0.11);
+  color-scheme:light;
+}
+:root[data-look="blueberry"]{
+  --desk:#F4F6FF;
+  --blob-a:#DCE2FF;
+  --blob-b:#FFE4EF;
+  --doodle:rgba(59,76,192,0.16);
+  --paper:#E5EAFF;
+  --paper-hi:#D2DAFF;
+  --thumb:#E5EAFF;
+  --ink:#3B4CC0;
+  --ink-soft:rgba(59,76,192,0.8);
+  --line:rgba(59,76,192,0.3);
+  --btn-bg:#3B4CC0;
+  --btn-fg:#F4F6FF;
+  --blush:#FFADC6;
+  --bunny-fill:#E5EAFF;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(59,76,192,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(255,221,128,.9);
+  --grid:rgba(59,76,192,0.11);
+  color-scheme:light;
+}
+:root[data-look="lavender"]{
+  --desk:#F9F4FF;
+  --blob-a:#E7DAFF;
+  --blob-b:#D9F3EC;
+  --doodle:rgba(106,63,181,0.16);
+  --paper:#EEE4FF;
+  --paper-hi:#DFCFFF;
+  --thumb:#EEE4FF;
+  --ink:#6A3FB5;
+  --ink-soft:rgba(106,63,181,0.8);
+  --line:rgba(106,63,181,0.3);
+  --btn-bg:#6A3FB5;
+  --btn-fg:#F9F4FF;
+  --blush:#FFA6C4;
+  --bunny-fill:#EEE4FF;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(106,63,181,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(150,220,196,.85);
+  --grid:rgba(106,63,181,0.11);
+  color-scheme:light;
+}
+:root[data-look="peach"]{
+  --desk:#FFF7F0;
+  --blob-a:#FFDDC4;
+  --blob-b:#FFF0B5;
+  --doodle:rgba(176,70,42,0.16);
+  --paper:#FFE7D5;
+  --paper-hi:#FFD6B8;
+  --thumb:#FFE7D5;
+  --ink:#B0462A;
+  --ink-soft:rgba(176,70,42,0.8);
+  --line:rgba(176,70,42,0.3);
+  --btn-bg:#B0462A;
+  --btn-fg:#FFF7F0;
+  --blush:#FF9A8B;
+  --bunny-fill:#FFE7D5;
+  --card-shadow:0 1px 0 rgba(255,255,255,.7) inset, 0 26px 50px -24px rgba(176,70,42,0.4);
+  --glass:none;
+  --grain:0.55;
+  --grain-blend:multiply;
+  --tshadow:none;
+  --tape:rgba(160,212,240,.9);
+  --grid:rgba(176,70,42,0.11);
+  color-scheme:light;
+}
+:root[data-look="midnight"]{
+  --desk:#131938;
+  --blob-a:#272E6B;
+  --blob-b:#3A2560;
+  --doodle:rgba(255,231,168,0.14);
+  --paper:#252B63;
+  --paper-hi:#313A7C;
+  --thumb:#252B63;
+  --ink:#FFE7A8;
+  --ink-soft:rgba(255,231,168,0.76);
+  --line:rgba(255,231,168,0.3);
+  --btn-bg:#FFE7A8;
+  --btn-fg:#252B63;
+  --blush:#FF9EC0;
+  --bunny-fill:#252B63;
+  --card-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 26px 60px -20px rgba(0,0,0,.65);
+  --glass:none;
+  --grain:0.3;
+  --grain-blend:screen;
+  --tshadow:none;
+  --tape:rgba(255,158,192,.62);
+  --grid:rgba(255,231,168,0.09);
+  color-scheme:dark;
+}
+:root[data-look="glass"]{
+  --desk:#9A86C9;
+  --blob-a:#FF9DC0;
+  --blob-b:#8FD8C8;
+  --doodle:rgba(255,255,255,.5);
+  --paper:rgba(58,58,72,.36);
+  --paper-hi:rgba(255,255,255,.14);
+  --thumb:#FFFFFF;
+  --ink:#FFFFFF;
+  --ink-soft:rgba(255,255,255,.84);
+  --line:rgba(255,255,255,.4);
+  --btn-bg:rgba(255,255,255,.92);
+  --btn-fg:#3E3E4C;
+  --blush:#FFB0CF;
+  --bunny-fill:transparent;
+  --card-shadow:0 1px 0 rgba(255,255,255,.3) inset, 0 26px 50px -20px rgba(30,30,50,.45);
+  --glass:blur(20px) saturate(1.3);
+  --grain:0;
+  --grain-blend:normal;
+  --tshadow:0 1px 2px rgba(20,20,40,.25);
+  --tape:rgba(255,255,255,.42);
+  --grid:rgba(255,255,255,.2);
+  color-scheme:dark;
+}

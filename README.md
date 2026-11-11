@@ -21,7 +21,9 @@ Then open http://localhost:8000.
 
 ## Files
 
-- `index.html` holds the page and its styles
-- `app.js` holds the timer, tasks, nudges and floating window
-- `sw.js` and `manifest.webmanifest` make it installable and offline-friendly
+- `index.html` is the landing page, with the Mac download and a link to the web app
+- `app/index.html` and `app/app.js` are the timer itself: tasks, nudges and the floating window
+- `palettes.css` holds the color palettes, shared by both pages
+- `sw.js` and `manifest.webmanifest` make the timer installable and offline-friendly
 - `icons/` holds the app icons
+- `mac/` is the Mac app: a small Swift wrapper around the web app. Build it with `mac/build.sh`

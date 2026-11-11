@@ -16,7 +16,7 @@ lipo -create build/obj/Pawmodoro-arm64 build/obj/Pawmodoro-x86_64 -output "$APP/
 
 cp Info.plist "$APP/Contents/Info.plist"
 cp AppIcon.icns "$APP/Contents/Resources/AppIcon.icns"
-cp ../index.html ../app.js "$APP/Contents/Resources/web/"
+cp ../app/index.html ../app/app.js ../palettes.css ../manifest.webmanifest "$APP/Contents/Resources/web/"
 cp ../icons/*.png ../icons/*.svg "$APP/Contents/Resources/web/icons/"
 
 codesign --force --deep --sign - "$APP"

@@ -5,9 +5,13 @@
   const NS = 'http://www.w3.org/2000/svg';
   const KEY = 'bunodoro:v1'; // kept from the first version so saved tasks carry over
   const LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
-  const LOOKS = ['auto', 'paper', 'night', 'glass'];
-  const LOOK_ICON = { auto: 'i-auto', paper: 'i-sun', night: 'i-moon', glass: 'i-glass' };
-  const LOOK_SAY = { auto: 'matching your system', paper: 'paper theme', night: 'night theme', glass: 'glass theme' };
+  const LOOKS = ['auto', 'strawberry', 'matcha', 'blueberry', 'lavender', 'peach', 'midnight', 'glass'];
+  const OLD_LOOKS = { paper: 'strawberry', night: 'midnight' }; // names from earlier versions
+  const LOOK_ICON = { auto: 'i-auto', midnight: 'i-moon', glass: 'i-glass' }; // the rest use the sun
+  const LOOK_SAY = {
+    auto: 'matching your system', strawberry: 'strawberry milk!', matcha: 'matcha latte time',
+    blueberry: 'blueberry!', lavender: 'taro bubble tea', peach: 'just peachy', midnight: 'starry night', glass: 'ooh, glassy',
+  };
   const STEP = { focus: { min: 1, max: 90, big: 5 }, short: { min: 1, max: 30, big: 1 }, long: { min: 5, max: 60, big: 5 }, every: { min: 2, max: 8, big: 1 } };
   const NUDGE_STEPS = [0, 15, 20, 30, 45, 60, 75, 90, 120];
   const SNOOZE = 10 * 60000;
@@ -66,6 +70,7 @@
     out.today = { ...base.today, ...(d.today || {}) };
     out.nudges = { ...base.nudges, ...(d.nudges || {}) };
     if (!Array.isArray(out.tasks)) out.tasks = base.tasks;
+    if (OLD_LOOKS[out.look]) out.look = OLD_LOOKS[out.look];
     if (!LOOKS.includes(out.look)) out.look = 'auto';
     if (out.buddy !== 'cat' && out.buddy !== 'bunny') out.buddy = 'cat';
     return out;
@@ -88,6 +93,8 @@
   function post(msg) { if (!bridge) return; try { bridge.postMessage(msg); } catch (e) {} }
   function sendLayout() {
     if (!inApp) return;
+    // The window hugs the card, so the page must never scroll (focus changes while resizing can scroll it).
+    if (window.scrollX || window.scrollY) window.scrollTo(0, 0);
     const r = el.stage.getBoundingClientRect();
     post({ type: 'size', w: Math.ceil(r.width), h: Math.ceil(r.height) });
     const grab = S.mini ? '#mini-bun, #mini-time' : '.tape, .bunny-wrap, .time, .phase-row';
@@ -96,6 +103,15 @@
       .filter((b) => b.width > 0 && b.height > 0)
       .map((b) => ({ x: b.left, y: b.top, w: b.width, h: b.height }));
     post({ type: 'drag', rects });
+    // In Glass, the Mac app paints real frosted glass behind the card, cut to the card's exact shape.
+    const card = S.mini ? el.mini : el.card;
+    const b = card.getBoundingClientRect(), cs = getComputedStyle(card);
+    const corner = (v) => { const [h, w] = v.split(' ').map(parseFloat); return [h || 0, Number.isNaN(w) || w === undefined ? (h || 0) : w]; };
+    post({
+      type: 'glass', on: S.look === 'glass',
+      rect: { x: b.left, y: b.top, w: b.width, h: b.height },
+      radii: [cs.borderTopLeftRadius, cs.borderTopRightRadius, cs.borderBottomRightRadius, cs.borderBottomLeftRadius].map(corner),
+    });
   }
 
   /* ---------- sound ---------- */
@@ -136,7 +152,7 @@
     if (!S.settings.notify || !('Notification' in window) || Notification.permission !== 'granted') return;
     if (pipWin || (document.visibilityState === 'visible' && document.hasFocus())) return; // already on screen
     try {
-      const n = new Notification(title, { body, icon: 'icons/icon-192.png', tag: 'pawmodoro', renotify: true });
+      const n = new Notification(title, { body, icon: '../icons/icon-192.png', tag: 'pawmodoro', renotify: true });
       n.onclick = () => { window.focus(); n.close(); };
     } catch (e) {}
   }
@@ -338,8 +354,9 @@
     el.bunny.dataset.buddy = S.buddy; el.miniBun.dataset.buddy = S.buddy;
     el.tag.textContent = `a tiny focus timer with a ${S.buddy} buddy`;
     el.hintBuddy.textContent = `your ${S.buddy}`;
-    setIcon(el.look, LOOK_ICON[S.look]);
-    el.look.setAttribute('aria-label', `Theme: ${S.look}. Change theme`);
+    setIcon(el.look, LOOK_ICON[S.look] || 'i-sun');
+    el.look.setAttribute('aria-label', `Colors: ${S.look}. Switch colors`);
+    if (el.themeMeta) el.themeMeta.content = getComputedStyle(document.documentElement).getPropertyValue('--desk').trim() || '#FFF4F7';
     el.phase.textContent = LABEL[t.phase];
     el.card.dataset.running = String(t.running);
     const goText = t.running ? 'Pause' : t.fresh ? 'Start' : 'Resume';
@@ -469,6 +486,7 @@
       floatBtn: $('#float-btn'), miniFloat: $('#mini-float'), miniBtn: $('#mini-btn'), miniExpand: $('#mini-expand'),
       out: { focus: $('#out-focus'), short: $('#out-short'), long: $('#out-long'), every: $('#out-every'), water: $('#out-water'), stretch: $('#out-stretch') },
       unit: { water: $('#unit-water'), stretch: $('#unit-stretch') },
+      themeMeta: $('meta[name="theme-color"]'),
     });
 
     el.go.addEventListener('click', toggle);
@@ -522,8 +540,9 @@
       cheer(S.buddy === 'cat' ? 'meow! hi there' : 'hop! hi there', 1800);
     });
 
-    el.miniBtn.addEventListener('click', () => { S.mini = true; render(); save(); resizePip(); el.miniExpand.focus(); });
-    el.miniExpand.addEventListener('click', () => { S.mini = false; render(); save(); resizePip(); el.miniBtn.focus(); });
+    // Move focus along only for keyboard users (a mouse click has detail > 0), so no stray focus ring appears.
+    el.miniBtn.addEventListener('click', (e) => { S.mini = true; render(); save(); resizePip(); if (!e.detail) el.miniExpand.focus(); });
+    el.miniExpand.addEventListener('click', (e) => { S.mini = false; render(); save(); resizePip(); if (!e.detail) el.miniBtn.focus(); });
     el.floatBtn.addEventListener('click', toggleFloat);
     el.miniFloat.addEventListener('click', toggleFloat);
     $('#unfloat').addEventListener('click', () => { if (pipWin) pipWin.close(); });
@@ -584,6 +603,8 @@
       hideBtn.addEventListener('click', () => post({ type: 'hide' }));
       el.notify.closest('label').hidden = true; // the floating card is always on screen instead
       if ('ResizeObserver' in window) new ResizeObserver(() => sendLayout()).observe(el.stage);
+      window.addEventListener('scroll', () => { if (window.scrollX || window.scrollY) window.scrollTo(0, 0); });
+      window.addEventListener('resize', () => requestAnimationFrame(sendLayout));
       if (document.fonts && document.fonts.ready) document.fonts.ready.then(sendLayout);
     }
   }
@@ -616,7 +637,7 @@
 
   if ('serviceWorker' in navigator && document.querySelector('link[rel="manifest"]') &&
       (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
-    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => {}); });
+    window.addEventListener('load', () => { navigator.serviceWorker.register('../sw.js').catch(() => {}); });
   }
 
   const hot = window.claude && window.claude.hot;
