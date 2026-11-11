@@ -120,6 +120,21 @@ a{color:inherit}
 .paw:nth-child(even){transform:rotate(14deg) translateY(-1.5px)}
 
 .rule{width:100%;height:0;border:0;border-top:1.6px dashed var(--line);margin:4px 0}
+.side{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
+
+/* Wide screens: lay the card out sideways (cat and timer left, features and download right) so it fits short laptop windows */
+@media (min-width:780px){
+  .desk{padding-block:34px 24px;gap:18px}
+  .sheet{
+    width:min(900px,100%);display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.05fr);align-items:center;
+    column-gap:0;padding:38px 40px 28px;
+  }
+  .rule-top{display:none}
+  .side-a{padding-right:36px}
+  .side-b{padding-left:36px;border-left:1.6px dashed var(--line);align-items:stretch}
+  .side-b .fine{text-align:center}
+  .tagline{max-width:28ch}
+}
 
 /* features, each with a hand-drawn ticked box */
 .features{list-style:none;margin:0;padding:0 6px;width:100%;display:flex;flex-direction:column;gap:8px;text-align:left}
@@ -165,7 +180,7 @@ a{color:inherit}
 .sw[aria-checked="true"]{color:var(--ink);font-weight:700}
 .sw[aria-checked="true"] .sw-dot{box-shadow:0 0 0 2px var(--paper),0 0 0 4px var(--ink)}
 
-.credit{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:10px;margin:0;color:var(--ink-soft);font-size:.84rem}
+.credit{position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px 14px;margin:0;color:var(--ink-soft);font-size:.84rem}
 .credit a{text-underline-offset:3px}
 .coffee{display:inline-flex;align-items:center;gap:7px;padding:6px 14px;border:1.6px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper)}
 .coffee svg{width:16px;height:16px}
@@ -248,6 +263,7 @@ a{color:inherit}
 
   <main class="sheet" id="download">
     <span class="tape" aria-hidden="true"></span>
+    <div class="side side-a">
     <h1 class="wordmark">pawmodoro<svg aria-hidden="true"><use href="#i-paw"/></svg></h1>
     <p class="tagline">a tiny focus timer with a cat who believes in you</p>
 
@@ -365,10 +381,13 @@ a{color:inherit}
     <div class="time" id="time" aria-label="Example timer">25:00</div>
     <div class="paws" aria-hidden="true"><span class="paw" style="--p:1"></span><span class="paw" style="--p:1"></span><span class="paw" id="paw-now"></span><span class="paw"></span></div>
 
-    <hr class="rule">
+    </div>
+
+    <hr class="rule rule-top">
+    <div class="side side-b">
     <ul class="features">
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>focus and break timer you can tune</li>
-      <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>a cat (or bunny) who naps and cheers you on</li>
+      <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>a cat who naps, sips and cheers you on</li>
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>little reminders to sip water and stretch</li>
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>floats on top, lives in your menu bar</li>
       <li><svg class="tick" aria-hidden="true"><use href="#l-tick"/></svg>seven sweet colors, even frosted glass</li>
@@ -388,6 +407,7 @@ a{color:inherit}
         <li>Look for the paw in your menu bar. Click it to show or hide your cat.</li>
       </ol>
     </details>
+    </div>
   </main>
 
   <div class="pickers swatches" role="radiogroup" aria-label="Colors">
@@ -410,7 +430,7 @@ a{color:inherit}
 <script>
 (() => {
   // Paste your Buy Me a Coffee link here (like 'https://buymeacoffee.com/yourname') to show the button.
-  const COFFEE_URL = '';
+  const COFFEE_URL = 'https://buymeacoffee.com/uroojhaidek';
 
   const KEY = 'bunodoro:v1'; // the timer app's saved settings, so both pages share your colors
   const LOOKS = ['auto', 'strawberry', 'matcha', 'blueberry', 'lavender', 'peach', 'midnight', 'glass'];

@@ -1,4 +1,4 @@
-/* Pawmodoro: a cute pomodoro timer with a cat (or bunny) buddy. */
+/* Pawmodoro: a cute pomodoro timer with a cat buddy. */
 (() => {
   'use strict';
   const $ = (s) => document.querySelector(s);

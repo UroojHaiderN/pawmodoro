@@ -1,12 +1,12 @@
 # Pawmodoro
 
-A cute, hand-drawn pomodoro timer with a cat buddy (or a bunny, if you prefer).
+A cute, hand-drawn pomodoro timer with a cat buddy.
 
 - Focus and break timer with paw prints that fill in as you finish sessions
 - A task list, and your buddy cheers when you check something off
-- Water and stretch nudges that count up while the timer runs
+- Little reminders to sip water and stretch, at random times while the timer runs
 - **Float**: in Chrome or Edge on a computer, the float button pops the timer into a small window that stays on top of every other window and app
-- Paper, Night and Glass themes, plus a mini mode
+- Seven colors (Strawberry, Matcha, Blueberry, Taro, Peach, Midnight and frosted Glass), plus a mini mode
 - Installable as an app, and works offline once it has loaded
 
 ## Run it locally
