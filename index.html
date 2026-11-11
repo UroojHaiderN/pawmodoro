@@ -202,6 +202,20 @@ a{color:inherit}
 .pickers .sw-dot::after{inset:5px}
 .credit{font-size:.78rem}
 
+/* the cat feels alive: blinks, breathes, swishes its tail; its little friend hops now and then */
+.bunny .eye{transform-box:fill-box;transform-origin:center;animation:blink 4.6s infinite}
+.bunny[data-state="focus"] .eye{animation-duration:5.8s}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}95.5%,97.5%{transform:scaleY(.12)}}
+.bunny[data-state="idle"] .bun,.bunny[data-state="sip"] .bun{animation:breathe 3.6s ease-in-out infinite}
+.bunny[data-state="break"] .bun{animation:breathe 5s ease-in-out infinite}
+@keyframes breathe{50%{transform:translateY(.5px) scale(1.012,.988)}}
+.bunny .tail{transform-box:fill-box;transform-origin:0% 90%;animation:swish 2.8s ease-in-out infinite}
+.bunny .tail-l{transform-origin:100% 90%;animation:swish-l 4.2s ease-in-out infinite}
+@keyframes swish{50%{transform:rotate(-13deg)}}
+@keyframes swish-l{50%{transform:rotate(9deg)}}
+.bunny .friend{transform-box:fill-box;transform-origin:50% 100%;animation:friend-hop 3.4s ease-in-out infinite}
+@keyframes friend-hop{0%,68%,100%{transform:none}76%{transform:translateY(-2.6px) rotate(-5deg)}84%{transform:translateY(0) rotate(3deg)}90%{transform:none}}
+
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
 }
@@ -265,6 +279,8 @@ a{color:inherit}
   <symbol id="m-mochi" viewBox="0 0 40 32"><g filter="url(#wobble)" stroke="#2E5631" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#BFE0A6" d="M4 24 C4 12 12 6 20 6 C28 6 36 12 36 24 C36 28 32 29 20 29 C8 29 4 28 4 24 Z"/><path fill="none" stroke="#FFFFFF" stroke-width="1.6" d="M11 12 q3 -3 6 -3"/><circle cx="15" cy="19" r="1.7" fill="#2E5631" stroke="none"/><circle cx="25" cy="19" r="1.7" fill="#2E5631" stroke="none"/><path fill="none" stroke-width="1.4" d="M18 21.4 q2 2.2 4 0"/><ellipse cx="12.4" cy="21.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="27.6" cy="21.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
   <symbol id="m-softserve" viewBox="0 0 36 48"><g filter="url(#wobble)" stroke="#2E5631" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#E3B98C" d="M10 22 L18 46 L26 22 Z"/><path fill="none" stroke-width="1.1" d="M12.5 26 L22 39 M23.5 26 L14 39"/><path fill="#A9D48E" d="M7 23 C4 17 9 13 12 12 C11 7 15 4 19 5 C24 4 27 8 26 12 C30 13 32 18 29 23 Z"/><path fill="none" stroke="#FFFFFF" stroke-width="1.4" d="M13 9 q2 -2 5 -1"/><circle cx="14" cy="16" r="1.7" fill="#2E5631" stroke="none"/><circle cx="22" cy="16" r="1.7" fill="#2E5631" stroke="none"/><path fill="none" stroke-width="1.4" d="M16 18.4 q2 2.2 4 0"/><ellipse cx="11.4" cy="18.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="24.6" cy="18.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
   <symbol id="m-leaf" viewBox="0 0 40 40"><g filter="url(#wobble)" stroke="#2E5631" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#95C76A" d="M6 34 C6 18 18 6 34 6 C34 22 22 34 6 34 Z"/><path fill="none" stroke-width="1.5" d="M6 34 L28 12 M14 26 L13 19 M20 20 L19 13 M14 26 L21 27 M20 20 L27 21"/></g></symbol>
+  <!-- strawberry matcha: the cat's little friend in the Matcha colors -->
+  <symbol id="m-strawmatcha" viewBox="0 0 26 34"><g filter="url(#wobble)" stroke="#2E5631" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path fill="#F7A6B8" d="M15.2 10.8 L18.6 0.8 L21 1.5 L17.6 11.5 Z"/><path fill="#F7FBF3" d="M3.5 9.5 h19 l-2.1 21 q-.3 2.5 -2.8 2.5 h-9.2 q-2.5 0 -2.8 -2.5 z"/><path fill="#8DC26F" stroke="none" d="M4.4 14.5 h17.2 l-.75 7.5 h-15.7 z"/><path fill="#F7A6B8" stroke="none" d="M5.15 22 h15.7 l-.75 8.3 q-.25 1.9 -2.2 1.9 h-9.8 q-1.95 0 -2.2 -1.9 z"/><path fill="none" stroke="#FFFFFF" stroke-width="1.2" d="M6 22.2 q2.5 1.6 5 0 q2.5 -1.6 5 0 q2.2 1.4 4 0"/><path fill="none" d="M3.5 9.5 h19 l-2.1 21 q-.3 2.5 -2.8 2.5 h-9.2 q-2.5 0 -2.8 -2.5 z"/><path fill="#FF6F8A" d="M5 4.2 c2.6 0 4.2 2 3.3 4.6 c-.7 2 -2.2 3.3 -3.3 3.7 c-1.1 -.4 -2.6 -1.7 -3.3 -3.7 c-.9 -2.6 .7 -4.6 3.3 -4.6 z"/><path fill="#8DC26F" stroke-width="1.1" d="M3 4.4 l2 -1.6 l2 1.6 l-2 .8 z"/><g fill="#FFE08A" stroke="none"><circle cx="4" cy="7" r=".55"/><circle cx="6.1" cy="7.6" r=".55"/><circle cx="5" cy="9.6" r=".55"/></g><circle cx="10.5" cy="26" r="1.05" fill="#2E5631" stroke="none"/><circle cx="15.5" cy="26" r="1.05" fill="#2E5631" stroke="none"/><path fill="none" stroke-width="1" d="M12 27.6 q1 1.1 2 0"/><ellipse cx="8.6" cy="27.4" rx="1.3" ry=".8" fill="#FF8FA8" stroke="none"/><ellipse cx="17.4" cy="27.4" rx="1.3" ry=".8" fill="#FF8FA8" stroke="none"/></g></symbol>
   <!-- sushi doodles, shown on the desk in the Sushi colors -->
   <symbol id="s-nigiri" viewBox="0 0 48 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path fill="#FFFFFF" d="M6 27 C6 19 14 16 24 16 C34 16 42 19 42 27 C42 34 34 36 24 36 C14 36 6 34 6 27 Z"/><path fill="#F59A7E" d="M3 18 C8 9 22 6 34 8 C42 9 46 13 44 17 C40 21 28 22 16 22 C9 22 4 21 3 18 Z"/><path fill="none" stroke="#F6C453" stroke-width="2.2" d="M8 21.5 C16 23.5 30 23.5 40 20"/><path fill="none" stroke="#FFE9E0" stroke-width="1.8" d="M14 10 C16 14 16 18 14 21 M22 8 C24 12 24 17 22 21 M30 8 C32 12 32 16 30 20"/><circle cx="19" cy="28" r="1.7" fill="#2B2B35" stroke="none"/><circle cx="29" cy="28" r="1.7" fill="#2B2B35" stroke="none"/><path fill="none" stroke="#2B2B35" stroke-width="1.4" d="M22 30.4 q2 2.2 4 0"/><ellipse cx="16.4" cy="30.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/><ellipse cx="31.6" cy="30.6" rx="2" ry="1.3" fill="#F7A9A8" stroke="none"/></g></symbol>
   <symbol id="s-maki" viewBox="0 0 40 40"><g filter="url(#wobble)" stroke="#2B2B35" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="20" cy="20" r="16" fill="#2B2B35"/><circle cx="20" cy="20" r="12" fill="#FFFFFF" stroke-width="1.4"/><path fill="#F59A7E" d="M14.5 17 q0 -2.5 2.5 -2.5 h5 q2.5 0 2.5 2.5 v6 q0 2.5 -2.5 2.5 h-5 q-2.5 0 -2.5 -2.5 z"/><path fill="#9CCB6B" stroke-width="1.2" d="M23 14 h3.5 v4.5 h-3.5 z"/><path fill="none" stroke-width="1.1" d="M11 22 q1.5 -1.5 3 0 M26 28 q1.5 -1.5 3 0 M27 22 q1.5 -1.5 3 0"/></g></symbol>
@@ -323,8 +339,8 @@ a{color:inherit}
               <path class="nofill" d="M77.7,24.5 C78,29 77.5,32.5 76,35"/>
             </g>
             <!-- cat tail sits behind the body; it swaps sides on breaks to make room for the mug -->
-            <g class="only-cat" data-show="idle cheer sip stretch"><path class="nofill" d="M74.5,88 C88,91 95,85 93,78 C92,74.5 88.5,75 88.5,78"/></g>
-            <g class="only-cat" data-show="break"><path class="nofill" d="M45.5,88 C32,91 25,85 27,78 C28,74.5 31.5,75 31.5,78"/></g>
+            <g class="only-cat" data-show="idle cheer sip stretch"><path class="nofill tail" d="M74.5,88 C88,91 95,85 93,78 C92,74.5 88.5,75 88.5,78"/></g>
+            <g class="only-cat" data-show="break"><path class="nofill tail tail-l" d="M45.5,88 C38,90 34,86 35,81 C35.5,78 38.5,78 38.5,81"/></g>
             <!-- bunny ears -->
             <g class="only-bunny" data-show="idle focus cheer sip stretch">
               <path d="M48,36 C41,26 39,12 45,7 C51,3 57,16 57,33.5"/>
@@ -368,13 +384,13 @@ a{color:inherit}
             </g>
             <!-- idle face -->
             <g data-show="idle">
-              <circle class="ink" cx="51" cy="52" r="2.3"/><circle class="ink" cx="69" cy="52" r="2.3"/>
+              <circle class="ink eye" cx="51" cy="52" r="2.3"/><circle class="ink eye" cx="69" cy="52" r="2.3"/>
               <path class="nofill" d="M57,57.5 q1.5,2 3,0 q1.5,2 3,0"/>
             </g>
             <!-- focus face + book -->
             <g data-show="focus">
               <path class="nofill" d="M47,47.5 L54,49.8"/><path class="nofill" d="M73,47.5 L66,49.8"/>
-              <circle class="ink" cx="51" cy="53.5" r="2.1"/><circle class="ink" cx="69" cy="53.5" r="2.1"/>
+              <circle class="ink eye" cx="51" cy="53.5" r="2.1"/><circle class="ink eye" cx="69" cy="53.5" r="2.1"/>
               <path class="nofill" d="M58,60 q2,-1.4 4,0"/>
               <path d="M38,73 L60,77 L82,73 L82,89 L60,93 L38,89 Z"/>
               <path class="nofill" d="M60,77 L60,93"/>
@@ -395,14 +411,14 @@ a{color:inherit}
             </g>
             <!-- sip: holding a glass of water with a straw -->
             <g data-show="sip">
-              <circle class="ink" cx="51" cy="53" r="2.2"/><circle class="ink" cx="69" cy="53" r="2.2"/>
+              <circle class="ink eye" cx="51" cy="53" r="2.2"/><circle class="ink eye" cx="69" cy="53" r="2.2"/>
               <ellipse class="nofill" cx="60" cy="61" rx="1.7" ry="1.6"/>
               <path class="nofill" d="M61.5,75 L60.6,62.8" style="stroke-width:2"/>
               <path d="M51.5,74 L68.5,74 L66.8,92 L53.2,92 Z"/>
               <path class="nofill" d="M52.4,80.5 L67.6,80.5" style="stroke-width:1.6"/>
               <ellipse cx="51.5" cy="82" rx="3.8" ry="3.3"/><ellipse cx="68.5" cy="82" rx="3.8" ry="3.3"/>
               <path class="ink" d="M101,57 c-2,3 -3,4.6 -3,6 a3,3 0 0 0 6,0 c0,-1.4 -1,-3 -3,-6z"/>
-              <path class="ink" d="M20,64 c-1.5,2.2 -2.2,3.4 -2.2,4.4 a2.2,2.2 0 0 0 4.4,0 c0,-1 -.7,-2.2 -2.2,-4.4z"/>
+              <path class="ink" d="M14,46 c-1.5,2.2 -2.2,3.4 -2.2,4.4 a2.2,2.2 0 0 0 4.4,0 c0,-1 -.7,-2.2 -2.2,-4.4z"/>
             </g>
             <!-- stretch: arms up, eyes squeezed shut -->
             <g data-show="stretch">
@@ -417,8 +433,13 @@ a{color:inherit}
               <g transform="translate(17 27)"><path class="spark ink" d="M0,-7 Q1.2,-1.2 7,0 Q1.2,1.2 0,7 Q-1.2,1.2 -7,0 Q-1.2,-1.2 0,-7 Z"/></g>
               <g transform="translate(102 23)"><path class="spark ink" style="animation-delay:-.45s" d="M0,-8 Q1.4,-1.4 8,0 Q1.4,1.4 0,8 Q-1.4,1.4 -8,0 Q-1.4,-1.4 0,-8 Z"/></g>
               <g transform="translate(105 63)"><path class="spark ink" style="animation-delay:-.2s" d="M0,-5 Q1,-1 5,0 Q1,1 0,5 Q-1,1 -5,0 Q-1,-1 0,-5 Z"/></g>
-              <g transform="translate(14 70)"><path class="spark ink" style="animation-delay:-.65s" d="M0,-5 Q1,-1 5,0 Q1,1 0,5 Q-1,1 -5,0 Q-1,-1 0,-5 Z"/></g>
+              <g transform="translate(9 45)"><path class="spark ink" style="animation-delay:-.65s" d="M0,-5 Q1,-1 5,0 Q1,1 0,5 Q-1,1 -5,0 Q-1,-1 0,-5 Z"/></g>
             </g>
+          </g>
+                  <!-- a little friend beside the cat: strawberry matcha in Matcha, a nigiri in Sushi -->
+          <g class="friend" aria-hidden="true">
+            <use class="prop-matcha" href="#m-strawmatcha" x="3" y="60" width="26" height="34"/>
+            <use class="prop-sushi" href="#s-nigiri" x="0" y="70" width="32" height="27"/>
           </g>
         </svg>
       <p class="bubble" id="bubble" aria-live="off">reading with you</p>

@@ -79,3 +79,7 @@
 .dd-sushi{display:none}
 :root[data-look="sushi"] .dd-sushi{display:block}
 :root[data-look="sushi"] .dd-matcha{display:none}
+/* The cat's little friend: strawberry matcha in Matcha, a nigiri in Sushi */
+.prop-sushi{display:none}
+:root[data-look="sushi"] .prop-sushi{display:inline}
+:root[data-look="sushi"] .prop-matcha{display:none}
