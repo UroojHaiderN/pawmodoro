@@ -122,43 +122,6 @@ a{color:inherit}
 .rule{width:100%;height:0;border:0;border-top:1.6px dashed var(--line);margin:4px 0}
 .side{display:flex;flex-direction:column;align-items:center;gap:12px;width:100%;min-width:0}
 
-/* Wide screens: lay the card out sideways (cat and timer left, features and download right) so it fits short laptop windows */
-@media (min-width:640px){
-  .desk{justify-content:center;padding-block:24px;gap:16px}
-  .sheet{
-    width:min(800px,100%);display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);align-items:center;
-    column-gap:0;padding:34px 34px 26px;
-  }
-  .rule-top{display:none}
-  .side-a{padding-right:28px}
-  .side-b{padding-left:28px;border-left:1.6px dashed var(--line);align-items:stretch}
-  .side-b .fine{text-align:center}
-  .tagline{max-width:28ch}
-}
-/* Medium windows: keep the card sideways by tightening the two halves */
-@media (min-width:640px) and (max-width:860px){
-  .sheet{padding:30px 24px 22px}
-  .side-a{padding-right:20px}
-  .side-b{padding-left:20px}
-  .features li{font-size:.86rem;gap:9px}
-  .tick{width:21px;height:21px}
-  .fine{font-size:.68rem}
-  .hero .bubble{left:auto;right:-6px;top:-4px;max-width:96px;font-size:.95rem}
-}
-/* Short laptop windows: shrink the cat and clock a little so everything fits on one screen */
-@media (min-width:640px) and (max-height:680px){
-  .desk{padding-block:14px;gap:12px}
-  .sheet{padding:28px 30px 20px}
-  .wordmark{font-size:2.5rem}
-  .hero{height:112px}
-  .bunny{width:134px;height:112px}
-  .time{font-size:2.8rem}
-  .features{gap:6px}
-  .go{height:48px;font-size:1.45rem}
-  .ghost{height:40px}
-  .pickers{padding:6px 14px}
-}
-
 /* features, each with a hand-drawn ticked box */
 .features{list-style:none;margin:0;padding:0 6px;width:100%;display:flex;flex-direction:column;gap:8px;text-align:left}
 .features li{display:flex;align-items:center;gap:12px;font-size:.94rem;line-height:1.3}
@@ -208,6 +171,36 @@ a{color:inherit}
 .coffee{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border:1.3px solid var(--line);border-radius:999px;text-decoration:none;color:var(--ink-soft);background:var(--paper);font-size:.72rem}
 .coffee svg{width:12px;height:12px}
 .coffee:hover{color:var(--ink);border-color:var(--ink)}
+
+/* Compact tall card: everything fits on one screen, like a little app card */
+.desk{justify-content:center;padding-block:18px 14px}
+.stack{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:12px;width:100%}
+.sheet{width:min(390px,100%);padding:28px 26px 20px;gap:8px}
+.side{gap:8px}
+.wordmark{font-size:2.3rem}
+.tagline{font-size:.8rem;max-width:none;margin:0}
+.hero{height:92px;margin:0}
+.bunny{width:108px;height:90px}
+.bubble{left:calc(50% + 40px);top:0;max-width:92px;font-size:.88rem;padding:4px 8px 5px}
+.time{font-size:2.5rem}
+.paws{margin-top:-4px}
+.paw{width:16px;height:16px}
+.rule{margin:2px 0}
+.features{gap:5px;padding:0 4px}
+.features li{font-size:.82rem;gap:9px;line-height:1.25}
+.tick{width:19px;height:19px}
+.go{height:44px;font-size:1.35rem;margin-top:0;box-shadow:0 3px 0 var(--line)}
+.go svg{width:18px;height:18px}
+.fine{font-size:.68rem;margin:-2px 0 0}
+.ghost{height:34px;font-size:.8rem}
+.ghost svg{width:15px;height:15px}
+.first summary{font-size:.74rem}
+.footrow{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:10px 18px}
+.pickers{padding:5px 12px;gap:4px 10px}
+.pickers .sw{min-width:38px;font-size:.6rem}
+.pickers .sw-dot{width:20px;height:20px}
+.pickers .sw-dot::after{inset:5px}
+.credit{font-size:.78rem}
 
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
@@ -312,6 +305,7 @@ a{color:inherit}
     <svg class="dd" style="bottom:17.5%;left:12.5%;--s:22px;--r:28deg"><use href="#i-paw"/></svg>
   </div>
 
+  <div class="stack">
   <main class="sheet" id="download">
     <span class="tape" aria-hidden="true"></span>
     <div class="side side-a">
@@ -461,6 +455,7 @@ a{color:inherit}
     </div>
   </main>
 
+  <div class="footrow">
   <div class="pickers swatches" role="radiogroup" aria-label="Colors">
     <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span>matcha</button>
     <button type="button" class="sw" role="radio" data-look="sushi" style="--sw-paper:#FFFFFF;--sw-ink:#2A3A33;--sw-dot:#FFA184"><span class="sw-dot"></span>sushi</button>
@@ -470,6 +465,8 @@ a{color:inherit}
     <span>made with <svg aria-hidden="true" style="width:13px;height:13px;vertical-align:-1px"><use href="#i-paw"/></svg> by <a href="https://uroojhaider.com" target="_blank" rel="noopener">Urooj</a></span>
     <a class="coffee" id="coffee" href="#" target="_blank" rel="noopener" hidden><svg aria-hidden="true"><use href="#l-coffee"/></svg>buy me a coffee</a>
   </footer>
+  </div>
+  </div>
 </div>
 
 <script>
@@ -524,6 +521,18 @@ a{color:inherit}
   }
   paint();
   if (!still) setInterval(() => { left = left > 0 ? left - 1 : total; paint(); }, 1000);
+  // Keep everything on one screen: if the window is too short, shrink the whole card a little instead of scrolling.
+  const stack = document.querySelector('.stack');
+  function fit() {
+    stack.style.zoom = '';
+    if (innerWidth < 600) return; // phones scroll naturally
+    const need = stack.getBoundingClientRect().height + 48; // room for the tape and a little margin
+    const scale = Math.max(0.65, Math.min(1, innerHeight / need));
+    if (scale < 0.999) stack.style.zoom = scale.toFixed(3);
+  }
+  fit();
+  addEventListener('resize', fit);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
 })();
 </script>
 </body>
