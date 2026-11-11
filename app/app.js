@@ -609,6 +609,7 @@
     renderTasks();
     if (S.timer.running && Date.now() >= S.timer.endAt) complete(true);
     else render();
+    if (/[?&]reel\b/.test(location.search)) window.pawReel = { nudge: showNudge, say }; // lets the promo reel trigger moments
     const demo = new URLSearchParams(location.search).get('demo');
     if (demo && NUDGE[demo]) setTimeout(() => showNudge(demo), 900);
     else setTimeout(() => say(S.timer.running ? 'welcome back!' : S.buddy === 'cat' ? 'meow! pick a task, then press start' : 'hi! pick a task, then press start', 4200), 350);

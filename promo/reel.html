@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=540">
+<title>Pawmodoro reel</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=M+PLUS+Rounded+1c:wght@400;500;700&display=swap">
+<script>
+  // Demo state for the reel, written before the app loads so it opens with these tasks.
+  (() => {
+    const d = new Date(), today = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+    localStorage.setItem('bunodoro:v1', JSON.stringify({
+      settings: { focus: 25, short: 5, long: 15, every: 4, auto: false, notify: false },
+      tasks: [
+        { id: 'a', text: 'read chapter 4', done: false },
+        { id: 'b', text: 'email my professor', done: false },
+        { id: 'c', text: 'finish design homework', done: false },
+        { id: 'd', text: 'make coffee', done: true },
+      ],
+      currentId: 'a', buddy: 'cat', look: 'matcha', vol: 60, muted: true, mini: false, showDone: false,
+      timer: { phase: 'focus', cycle: 1, total: 1500000, remaining: 1500000, running: false, endAt: 0, fresh: true },
+      nudges: { water: 0, stretch: 0, waterDue: 9e9, stretchDue: 9e9 },
+      today: { date: today, count: 1, minutes: 25, water: 2, stretch: 1 },
+    }));
+  })();
+</script>
+<style>
+  html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#F5F9EF}
+  iframe{position:absolute;inset:0;width:540px;height:960px;border:0}
+  #landing{opacity:0;transition:opacity .7s ease}
+  #landing.show{opacity:1}
+  .cap{
+    position:absolute;left:50%;top:54px;z-index:5;transform:translateX(-50%) rotate(-2deg);
+    padding:12px 24px 14px;background:#FFFFFF;color:#2B2B35;border:3px solid #2B2B35;
+    border-radius:24px 20px 26px 18px / 20px 26px 18px 24px;box-shadow:0 6px 0 rgba(43,43,53,.18);
+    font:700 31px/1.1 Gaegu, "Chalkboard SE", cursive;text-align:center;white-space:nowrap;
+  }
+  .cap:empty{display:none}
+  .cap.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+  .cap.bottom{top:auto;bottom:64px}
+  @keyframes pop{from{transform:translateX(-50%) rotate(-7deg) scale(.55);opacity:0}}
+  .tap{position:absolute;z-index:6;width:48px;height:48px;margin:-24px 0 0 -24px;border-radius:50%;
+    background:rgba(255,255,255,.6);border:3px solid rgba(43,43,53,.55);opacity:0;pointer-events:none}
+  .tap.go{animation:tap .6s ease-out}
+  @keyframes tap{0%{opacity:1;transform:scale(.45)}100%{opacity:0;transform:scale(1.45)}}
+</style>
+</head>
+<body>
+<iframe id="app" src="../app/?reel"></iframe>
+<iframe id="landing" src="../" tabindex="-1"></iframe>
+<div class="cap" id="cap"></div>
+<div class="tap" id="tap"></div>
+<script>
+  const appFrame = document.getElementById('app'), landing = document.getElementById('landing');
+  const capEl = document.getElementById('cap'), tapEl = document.getElementById('tap');
+  const appWin = () => appFrame.contentWindow;
+  const $a = (q) => appWin().document.querySelector(q);
+
+  // Show only the timer card, bigger, on its sticker-covered desk.
+  function styleApp() {
+    const st = appWin().document.createElement('style');
+    st.textContent = `.topbar,.hint{display:none!important}
+      .desk{padding:0!important;gap:0!important;min-height:960px!important}
+      .stage{min-height:960px;padding-top:76px;box-sizing:border-box}
+      .card{zoom:1.25}
+      .mini{zoom:1.8}`;
+    appWin().document.head.append(st);
+  }
+  function cap(text, bottom) {
+    capEl.textContent = text;
+    capEl.classList.toggle('bottom', !!bottom);
+    capEl.classList.remove('pop'); void capEl.offsetWidth; capEl.classList.add('pop');
+  }
+  function tapOn(el) {
+    const r = el.getBoundingClientRect();
+    tapEl.style.left = (r.left + r.width / 2) + 'px'; tapEl.style.top = (r.top + r.height / 2) + 'px';
+    tapEl.classList.remove('go'); void tapEl.offsetWidth; tapEl.classList.add('go');
+  }
+  function press(q) { const el = $a(q); tapOn(el); setTimeout(() => el.click(), 150); }
+
+  const loaded = (f) => new Promise((ok) => (f.contentDocument && f.contentDocument.readyState === 'complete' ? ok() : f.addEventListener('load', ok, { once: true })));
+  window.reelReady = (async () => {
+    await Promise.all([loaded(appFrame), loaded(landing), document.fonts.ready]);
+    styleApp();
+    await appWin().document.fonts.ready;
+    await landing.contentWindow.document.fonts.ready;
+    return true;
+  })();
+
+  const steps = [
+    [0,     () => { cap('i made a tiny focus timer 🐾'); appWin().pawReel.say('hi! focus with me?', 2400); }],
+    [2600,  () => press('#go')],
+    [2800,  () => cap('a cat who studies with you 📖')],
+    [6200,  () => press('#tasks .check')],
+    [6350,  () => cap('finish a task = instant cheer ✨')],
+    [9800,  () => appWin().pawReel.nudge('water')],
+    [9950,  () => cap('little reminders to sip water 💧')],
+    [12500, () => press('#nudge-done')],
+    [13300, () => { $a('#seg [data-look=sushi]').click(); cap('matcha or sushi? 🍵🍣'); }],
+    [16300, () => press('#mini-btn')],
+    [16450, () => cap('shrinks into a floating pill 🫧')],
+    [19400, () => { landing.classList.add('show'); cap('free for mac · link in bio 🐾', true); }],
+  ];
+  window.REEL_MS = 23000;
+  window.startReel = () => steps.forEach(([t, f]) => setTimeout(f, t));
+</script>
+</body>
+</html>

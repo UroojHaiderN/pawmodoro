@@ -3,3 +3,5 @@
 # copy of the Claude artifact version
 bunodoro.html
 mac/build/
+promo/out/
+promo/*.mp4
