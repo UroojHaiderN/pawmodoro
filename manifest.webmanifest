@@ -1,0 +1,15 @@
+{
+  "name": "Pawmodoro",
+  "short_name": "Pawmodoro",
+  "description": "A cute hand-drawn pomodoro timer with a cat buddy, water and stretch nudges, and a floating mini window.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF4F2",
+  "theme_color": "#FFE6EC",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
