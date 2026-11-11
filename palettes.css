@@ -73,7 +73,9 @@
   --grid:rgba(217,96,63,0.10);
   color-scheme:light;
 }
-/* Sushi swaps the desk doodles for little sushi pieces */
-.dd-sushi{display:none;opacity:.88}
+/* Desk stickers: little matcha treats in Matcha, little sushi friends in Sushi */
+.dd:not(.dd-matcha):not(.dd-sushi){display:none}
+.dd-matcha,.dd-sushi{opacity:.88}
+.dd-sushi{display:none}
 :root[data-look="sushi"] .dd-sushi{display:block}
-:root[data-look="sushi"] .dd:not(.dd-sushi){display:none}
+:root[data-look="sushi"] .dd-matcha{display:none}

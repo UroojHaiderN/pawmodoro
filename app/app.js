@@ -7,7 +7,6 @@
   const LABEL = { focus: 'Focus', short: 'Short break', long: 'Long break' };
   const LOOKS = ['matcha', 'sushi'];
   const OLD_LOOKS = {}; // earlier colors fall back to matcha
-  const LOOK_SAY = { matcha: 'matcha latte time', sushi: 'sushi time!' };
   const STEP = { focus: { min: 1, max: 90, big: 5 }, short: { min: 1, max: 30, big: 1 }, long: { min: 5, max: 60, big: 5 }, every: { min: 2, max: 8, big: 1 } };
   const NUDGE_RANGE = { water: [30, 60], stretch: [45, 75] }; // minutes of timer time, picked at random each time
   const SNOOZE = 10 * 60000;
@@ -523,7 +522,7 @@
     el.vol.addEventListener('input', () => { S.vol = +el.vol.value; S.muted = false; el.vol.style.setProperty('--fill', S.vol + '%'); setIcon(el.mute, S.vol === 0 ? 'i-muted' : 'i-speaker'); save(); });
     el.vol.addEventListener('change', () => { audio(); pop(); });
 
-    const setLook = (l) => { S.look = l; render(); save(); say(LOOK_SAY[l], 1600); };
+    const setLook = (l) => { S.look = l; render(); save(); };
     el.seg.addEventListener('click', (e) => { const b = e.target.closest('[data-look]'); if (b) setLook(b.dataset.look); });
     el.buddySeg.addEventListener('click', (e) => {
       const b = e.target.closest('[data-buddy]'); if (!b) return;
