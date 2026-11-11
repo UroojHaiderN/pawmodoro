@@ -27,13 +27,15 @@
 <style>
   html,body{margin:0;width:540px;height:960px;overflow:hidden;background:#F5F9EF}
   iframe{position:absolute;inset:0;width:540px;height:960px;border:0}
+  #app{transition:opacity .35s ease}
+  #app.dip{opacity:.15}
   #landing{opacity:0;transition:opacity .7s ease}
   #landing.show{opacity:1}
   .cap{
     position:absolute;left:50%;top:54px;z-index:5;transform:translateX(-50%) rotate(-2deg);
     padding:12px 24px 14px;background:#FFFFFF;color:#2B2B35;border:3px solid #2B2B35;
     border-radius:24px 20px 26px 18px / 20px 26px 18px 24px;box-shadow:0 6px 0 rgba(43,43,53,.18);
-    font:700 31px/1.1 Gaegu, "Chalkboard SE", cursive;text-align:center;white-space:nowrap;
+    font:700 31px/1.12 Gaegu, "Chalkboard SE", cursive;text-align:center;max-width:460px;width:max-content;text-wrap:balance;
   }
   .cap:empty{display:none}
   .cap.pop{animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
@@ -87,21 +89,36 @@
     return true;
   })();
 
+  const $l = (q) => landing.contentWindow.document.querySelector(q);
+  function toSushi() {
+    appFrame.classList.add('dip');
+    setTimeout(() => { $a('#seg [data-look=sushi]').click(); appFrame.classList.remove('dip'); }, 380);
+  }
+  function pressLanding(q) { const el = $l(q); tapOn(el); setTimeout(() => el.click(), 150); }
+
+  // A calm pace: each moment holds for about four seconds. Matcha first, then Sushi, then the landing page.
   const steps = [
-    [0,     () => { cap('i made a tiny focus timer 🐾'); appWin().pawReel.say('hi! focus with me?', 2400); }],
-    [2600,  () => press('#go')],
-    [2800,  () => cap('a cat who studies with you 📖')],
-    [6200,  () => press('#tasks .check')],
-    [6350,  () => cap('finish a task = instant cheer ✨')],
-    [9800,  () => appWin().pawReel.nudge('water')],
-    [9950,  () => cap('little reminders to sip water 💧')],
-    [12500, () => press('#nudge-done')],
-    [13300, () => { $a('#seg [data-look=sushi]').click(); cap('matcha or sushi? 🍵🍣'); }],
-    [16300, () => press('#mini-btn')],
-    [16450, () => cap('shrinks into a floating pill 🫧')],
-    [19400, () => { landing.classList.add('show'); cap('free for mac · link in bio 🐾', true); }],
+    // Matcha
+    [0,     () => { cap('i made a tiny focus timer 🐾'); appWin().pawReel.say('hi! focus with me?', 3000); }],
+    [3500,  () => press('#go')],
+    [3650,  () => cap('press start and your cat studies with you 📖')],
+    [7600,  () => press('#tasks .check')],
+    [7750,  () => cap('check off a task for a little cheer ✨')],
+    [11500, () => appWin().pawReel.nudge('water')],
+    [11650, () => cap('gentle reminders to sip water 💧')],
+    [14300, () => press('#nudge-done')],
+    // Sushi
+    [15600, () => { toSushi(); cap('pick your vibe: matcha or sushi 🍵🍣'); }],
+    [19600, () => appWin().pawReel.nudge('stretch')],
+    [19750, () => cap('stretch breaks, but make it cute 🙆')],
+    [22400, () => press('#nudge-done')],
+    [23600, () => press('#mini-btn')],
+    [23750, () => cap('shrinks into a tiny floating pill 🫧')],
+    // Landing page, flipping from matcha to sushi
+    [27400, () => { landing.classList.add('show'); cap('comment matcha or sushi to get the link 🍵🍣'); }],
+    [30200, () => pressLanding('.swatches [data-look=sushi]')],
   ];
-  window.REEL_MS = 23000;
+  window.REEL_MS = 33000;
   window.startReel = () => steps.forEach(([t, f]) => setTimeout(f, t));
 </script>
 </body>
