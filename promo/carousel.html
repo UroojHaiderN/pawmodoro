@@ -10,16 +10,16 @@
   :root{--bg:#F3F7EC;--ink:#2E5631;--soft:#5E7C60;--sushi:#F4DCD3}
   html,body{margin:0;width:540px;height:960px;overflow:hidden;background:var(--bg);font-family:"M PLUS Rounded 1c",system-ui,sans-serif;color:var(--ink)}
   iframe{position:absolute;border:0;background:transparent}
-  .text{position:absolute;top:104px;left:36px;right:36px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
-  .title{margin:0;font:700 52px/1.02 Gaegu,"Chalkboard SE",cursive;text-wrap:balance}
+  .text{position:absolute;top:158px;left:75px;right:75px;z-index:2;display:flex;flex-direction:column;align-items:center;gap:14px;text-align:center}
+  .title{margin:0;font:700 44px/1.04 Gaegu,"Chalkboard SE",cursive;text-wrap:balance}
   .sub{margin:0;font-size:17px;font-weight:500;color:var(--soft);text-wrap:balance;max-width:34ch}
-  .visual{left:0;top:290px;width:540px;height:670px}
+  .visual{left:0;top:300px;width:540px;height:520px}
   .swipe{position:absolute;bottom:20px;right:18px;font:700 24px/1 Gaegu,cursive;color:var(--soft)}
   /* matcha or sushi: two halves */
-  .half{position:absolute;top:300px;bottom:190px;left:24px;width:240px;border-radius:28px;background:#E4EFD8}
-  .half.r{left:276px;background:var(--sushi)}
-  .half-frame{top:300px;width:240px;height:500px}
-  .label{position:absolute;top:690px;width:240px;text-align:center;font:700 32px/1 Gaegu,cursive}
+  .half{position:absolute;top:305px;bottom:140px;left:75px;width:185px;border-radius:28px;background:#E4EFD8}
+  .half.r{left:280px;background:var(--sushi)}
+  .half-frame{top:305px;width:185px;height:420px}
+  .label{position:absolute;top:735px;width:185px;text-align:center;font:700 32px/1 Gaegu,cursive}
   /* floats on top: a soft wallpaper with a menu bar and the pill */
   .screen{position:absolute;left:40px;top:330px;width:460px;height:420px;border-radius:28px;overflow:hidden;
     background:linear-gradient(160deg,#D6E7FF,#F8DCE7 60%,#E4F2D8);box-shadow:0 22px 44px -22px rgba(46,86,49,.45)}
@@ -28,8 +28,34 @@
   .menubar .paw{display:flex;align-items:center;gap:5px}
   .menubar svg{width:15px;height:15px}
   .pill{left:0;top:120px;width:460px;height:200px}
+  /* slide 6: a realistic Mac desktop, cropped like a screenshot */
+  .shot{position:absolute;left:18px;top:312px;width:504px;height:600px;transform:scale(.774);transform-origin:top center;border-radius:22px;overflow:hidden;
+    background:radial-gradient(120% 90% at 15% 0%,#BFDDF5 0%,#93BCE6 34%,#7393D2 62%,#C8A9DA 100%);
+    box-shadow:0 26px 50px -20px rgba(30,40,60,.5),0 0 0 1px rgba(0,0,0,.06)}
+  .mb{position:absolute;inset:0 0 auto;z-index:3;height:24px;display:flex;align-items:center;gap:13px;padding:0 12px;
+    background:rgba(244,244,248,.66);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+    font:500 11px/1 -apple-system,"SF Pro Text","Helvetica Neue",sans-serif;color:#1D1D1F}
+  .mb b{font-weight:700}
+  .mb .right{margin-left:auto;display:flex;gap:11px;align-items:center;font-variant-numeric:tabular-nums}
+  .mb .right span{display:flex;align-items:center;gap:4px}
+  .mb svg{width:13px;height:13px}
+  .docwin{position:absolute;left:14px;top:40px;width:338px;height:478px;background:#FFFFFF;border-radius:11px;overflow:hidden;
+    box-shadow:0 20px 40px -12px rgba(0,0,0,.42),0 0 0 .5px rgba(0,0,0,.18)}
+  .docwin .tb{height:30px;background:#F5F4F7;border-bottom:1px solid #E4E3E7;display:flex;align-items:center;gap:6px;padding:0 10px;position:relative}
+  .docwin .tb i{width:10px;height:10px;border-radius:50%;display:block}
+  .docwin .tb span{position:absolute;left:0;right:0;text-align:center;font:600 10.5px -apple-system,"Helvetica Neue",sans-serif;color:#4A4A50}
+  .doc{padding:16px 20px;font:400 9.6px/1.6 -apple-system,"Helvetica Neue",sans-serif;color:#3A3A40}
+  .doc h2{margin:0 0 2px;font-size:16px;color:#1D1D1F}
+  .doc .meta{margin:0 0 10px;color:#8A8A90;font-size:9px}
+  .doc h3{margin:12px 0 3px;font-size:11px;color:#1D1D1F}
+  .doc p{margin:0 0 5px}
+  .doc mark{background:#FFF1A8;color:inherit;padding:0 2px;border-radius:2px}
+  .dock{position:absolute;left:50%;bottom:10px;z-index:3;transform:translateX(-50%);display:flex;gap:7px;padding:6px 8px;
+    background:rgba(255,255,255,.34);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-radius:16px;border:.5px solid rgba(255,255,255,.55)}
+  .dock b{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:19px;box-shadow:0 2px 5px rgba(0,0,0,.18)}
+  .floater{left:0;top:0;width:504px;height:610px;z-index:2}
   /* last slide */
-  .end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:0 40px}
+  .end{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:0 80px}
   .end .cat{width:150px;height:150px}
   .end .word{margin:0;font:700 66px/1 Gaegu,cursive}
   .end .free{margin:-6px 0 0;font-size:19px;font-weight:500;color:var(--soft)}
@@ -97,45 +123,55 @@
     if (n === 1) {
       localStorage.setItem('bunodoro:v1', state(doneTasks));
       text('meet pawmodoro 🐾', 'a tiny focus timer with a cat who believes in you');
-      await app('visual', '.card{zoom:1.02}');
-      document.body.insertAdjacentHTML('beforeend', '<div class="swipe">swipe →</div>');
+      await app('visual', '.card{zoom:.8}');
       await wait(900);
     } else if (n === 2) {
       localStorage.setItem('bunodoro:v1', state(doneTasks));
       text('your cat studies with you 📖', 'press start, and you two focus together');
-      const f = await app('visual', '.card{zoom:1.02}');
+      const f = await app('visual', '.card{zoom:.8}');
       await wait(4600); f.contentWindow.document.querySelector('#go').click(); await wait(2600);
     } else if (n === 3) {
       localStorage.setItem('bunodoro:v1', state({ timer: running(18) }));
       text('check off a task, get a cheer ✨', 'your little to-do list lives on the timer');
-      const f = await app('visual', '.card{zoom:1.3}' + HIDE.time + HIDE.controls + HIDE.bar + '.done-row,.add{display:none!important}');
+      const f = await app('visual', '.card{zoom:1.1}' + HIDE.time + HIDE.controls + HIDE.bar + '.done-row,.add{display:none!important}');
       await wait(4600); f.contentWindow.document.querySelector('#tasks .check').click(); await wait(1500);
     } else if (n === 4) {
       localStorage.setItem('bunodoro:v1', state({ timer: running(12) }));
       text('little water & stretch breaks 💧', 'they pop up at random while you focus');
-      const f = await app('visual', '.card{zoom:1.3}' + HIDE.tasks + HIDE.time + HIDE.controls + HIDE.bar);
+      const f = await app('visual', '.card{zoom:1.1}' + HIDE.tasks + HIDE.time + HIDE.controls + HIDE.bar);
       await wait(4600); f.contentWindow.pawReel.nudge('water'); await wait(1300);
     } else if (n === 5) {
       document.body.insertAdjacentHTML('beforeend', '<div class="half"></div><div class="half r"></div>');
       text('matcha or sushi? 🍵🍣', 'pick your cozy look');
-      const css = '.card{width:280px;zoom:.8}' + HIDE.tasks + HIDE.controls + HIDE.bar + '.bubble{display:none!important}';
+      const css = '.card{width:280px;zoom:.62}' + HIDE.tasks + HIDE.controls + HIDE.bar + '.bubble{display:none!important}';
       localStorage.setItem('bunodoro:v1', state());
-      const left = await app('half-frame', css); left.style.left = '24px';
+      const left = await app('half-frame', css); left.style.left = '75px';
       localStorage.setItem('bunodoro:v1', state({ look: 'sushi' }));
-      const right = await app('half-frame', css + 'html,body,.desk{background:transparent!important}'); right.style.left = '276px';
-      document.body.insertAdjacentHTML('beforeend', '<div class="label" style="left:24px">matcha</div><div class="label" style="left:276px;color:#2B2B35">sushi</div>');
+      const right = await app('half-frame', css + 'html,body,.desk{background:transparent!important}'); right.style.left = '280px';
+      document.body.insertAdjacentHTML('beforeend', '<div class="label" style="left:75px">matcha</div><div class="label" style="left:280px;color:#2B2B35">sushi</div>');
       await wait(4600);
     } else if (n === 6) {
-      localStorage.setItem('bunodoro:v1', state({ mini: true, timer: running(14) }));
-      text('it floats on top of your mac 🫧', 'a tiny pill above every app, with a paw in your menu bar');
-      document.body.insertAdjacentHTML('beforeend', `<div class="screen"><div class="menubar"><span class="paw">${pawIcon}<span id="mb">14:00</span></span><span>Tue 2:41</span></div></div>`);
-      const screen = document.querySelector('.screen');
-      const f = await app('pill', '.mini{zoom:1.55}.stage{display:grid;place-items:center}', screen);
+      localStorage.setItem('bunodoro:v1', state(Object.assign({}, doneTasks, { timer: running(14) })));
+      text('it floats on top of your mac 🫧', 'it stays above every app while you work');
+      const wifi = '<svg viewBox="0 0 24 24"><path d="M2.5 9.5a14 14 0 0 1 19 0M5.8 13a9.3 9.3 0 0 1 12.4 0M9.2 16.4a4.6 4.6 0 0 1 5.6 0" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="19.6" r="1.6" fill="currentColor"/></svg>';
+      const battery = '<svg viewBox="0 0 28 14" style="width:22px"><rect x="1" y="1.5" width="23" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.4"/><rect x="3" y="3.5" width="15" height="7" rx="1.5" fill="currentColor"/><rect x="25" y="5" width="2" height="4" rx="1" fill="currentColor"/></svg>';
+      document.body.insertAdjacentHTML('beforeend', `<div class="shot">
+        <div class="mb"><b>Notes</b><span>File</span><span>Edit</span><span>Format</span><span>View</span><span>Window</span><span>Help</span>
+          <div class="right"><span>${pawIcon}<span id="mb">14:00</span></span>${wifi}${battery}<span>Tue 2:41 PM</span></div></div>
+        <div class="docwin"><div class="tb"><i style="background:#FF5F57"></i><i style="background:#FEBC2E"></i><i style="background:#28C840"></i><span>Unit 4 notes</span></div>
+          <div class="doc"><h2>Unit 4 · Thermodynamics</h2><p class="meta">Lecture notes · Oct 14</p>
+            <h3>First law</h3><p>Energy can’t be created or destroyed, only moved around. For a closed system, <mark>ΔU = q + w</mark>, where q is the heat added and w is the work done on the system.</p>
+            <h3>Enthalpy</h3><p>At constant pressure, the heat exchanged equals the change in enthalpy, ΔH. A negative ΔH means the reaction gives off heat (exothermic).</p>
+            <h3>Entropy</h3><p>Entropy measures how spread out energy is. Spontaneous processes increase the total entropy of the universe.</p>
+            <h3>To review</h3><p>• practice problems 4.1 to 4.12<br>• flashcards for state functions<br>• read pages 212 to 230</p></div></div>
+        <div class="dock"><b style="background:#FFFFFF">📝</b><b style="background:#E8F1FF">🌐</b><b style="background:#FFF4D6">📅</b><b style="background:#E9F8EC">💬</b><b style="background:#FFE9EE">🎵</b><b style="background:#F1ECFF">📁</b></div>
+      </div>`);
+      const shot = document.querySelector('.shot');
+      const f = await app('floater', '.stage{min-height:100vh;display:flex;justify-content:flex-end;align-items:flex-start;padding:46px 12px 0 0}.card{zoom:.6}.bubble{display:none!important}', shot);
       await wait(1200);
-      document.getElementById('mb').textContent = f.contentWindow.document.querySelector('#mini-time').textContent;
+      document.getElementById('mb').textContent = f.contentWindow.document.querySelector('#time').textContent;
     } else if (n === 7) {
-      document.body.insertAdjacentHTML('beforeend', `<div class="end">${catHead}<h1 class="word">pawmodoro</h1><p class="free">free for mac</p>
-        <div class="btn">download for mac</div><p class="ask">comment MATCHA or SUSHI and i’ll send you the link 🍵🍣</p><p class="url">pawmodoro-app.vercel.app</p></div>`);
+      document.body.insertAdjacentHTML('beforeend', `<div class="end">${catHead}<h1 class="word">pawmodoro</h1><p class="ask">comment MATCHA or SUSHI to get the link 🍵🍣</p></div>`);
       await wait(300);
     }
     return true;
