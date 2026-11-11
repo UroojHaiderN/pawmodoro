@@ -13,7 +13,7 @@
     blueberry: 'blueberry!', lavender: 'taro bubble tea', peach: 'just peachy', midnight: 'starry night', glass: 'ooh, glassy',
   };
   const STEP = { focus: { min: 1, max: 90, big: 5 }, short: { min: 1, max: 30, big: 1 }, long: { min: 5, max: 60, big: 5 }, every: { min: 2, max: 8, big: 1 } };
-  const NUDGE_STEPS = [0, 15, 20, 30, 45, 60, 75, 90, 120];
+  const NUDGE_RANGE = { water: [30, 60], stretch: [45, 75] }; // minutes of timer time, picked at random each time
   const SNOOZE = 10 * 60000;
   const NUDGE = {
     water: {
@@ -50,7 +50,7 @@
 
   function defaults() {
     return {
-      settings: { focus: 25, short: 5, long: 15, every: 4, auto: false, water: 45, stretch: 60, notify: false },
+      settings: { focus: 25, short: 5, long: 15, every: 4, auto: false, notify: false },
       tasks: [
         { id: uid(), text: 'Check me off for a little cheer', done: false },
         { id: uid(), text: 'Add one real thing to finish today', done: false },
@@ -58,7 +58,7 @@
       ],
       currentId: null, buddy: 'cat', look: 'auto', vol: 60, muted: false, mini: false, showDone: false,
       timer: { phase: 'focus', cycle: 0, total: 25 * 60000, remaining: 25 * 60000, running: false, endAt: 0, fresh: true },
-      nudges: { water: 0, stretch: 0 }, // running time since the last nudge, in ms
+      nudges: { water: 0, stretch: 0, waterDue: 0, stretchDue: 0 }, // timer time since the last nudge, and when the next is due (ms)
       today: freshToday(),
     };
   }
@@ -212,11 +212,12 @@
 
   /* ---------- water + stretch nudges ---------- */
   let activeNudge = null;
+  const randomDue = (kind) => { const [lo, hi] = NUDGE_RANGE[kind]; return Math.round((lo + Math.random() * (hi - lo)) * 60000); };
   function checkNudges() {
     if (activeNudge) return;
     for (const kind of ['water', 'stretch']) {
-      const every = S.settings[kind];
-      if (every > 0 && S.nudges[kind] >= every * 60000) { showNudge(kind); return; }
+      if (!S.nudges[kind + 'Due']) S.nudges[kind + 'Due'] = randomDue(kind);
+      if (S.nudges[kind] >= S.nudges[kind + 'Due']) { showNudge(kind); return; }
     }
   }
   function showNudge(kind) {
@@ -240,12 +241,15 @@
     const kind = activeNudge; if (!kind) return;
     hideNudge();
     if (done) {
-      S.nudges[kind] = 0; rollToday(); S.today[kind] += 1;
+      S.nudges[kind] = 0; S.nudges[kind + 'Due'] = randomDue(kind); rollToday(); S.today[kind] += 1;
       pop(); cheer(pick(NUDGE[kind].done), 2000);
     } else {
-      S.nudges[kind] = Math.max(0, S.settings[kind] * 60000 - SNOOZE);
+      S.nudges[kind] = Math.max(0, S.nudges[kind + 'Due'] - SNOOZE);
       say('ok, in 10 minutes', 1800);
     }
+    // keep the other nudge at least 10 minutes away, so they never pile up
+    const other = kind === 'water' ? 'stretch' : 'water';
+    S.nudges[other] = Math.min(S.nudges[other], Math.max(0, S.nudges[other + 'Due'] - SNOOZE));
     render(); save();
   }
 
@@ -337,13 +341,7 @@
     el.doneList.hidden = !S.showDone || done.length === 0;
   }
   function renderSettings() {
-    ['focus', 'short', 'long', 'every'].forEach((k) => { el.out[k].textContent = S.settings[k]; });
-    ['water', 'stretch'].forEach((k) => {
-      const v = S.settings[k];
-      el.out[k].textContent = v ? v : 'off';
-      el.unit[k].textContent = v ? 'min' : '';
-    });
-    el.auto.checked = !!S.settings.auto;
+    ['focus', 'short', 'long'].forEach((k) => { el.out[k].textContent = S.settings[k]; });
     el.notify.checked = !!S.settings.notify && 'Notification' in window && Notification.permission === 'granted';
     el.seg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.look === S.look)));
     el.buddySeg.querySelectorAll('button').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.buddy === S.buddy)));
@@ -477,15 +475,14 @@
       doneToggle: $('#done-toggle'), doneCount: $('#done-count'),
       addForm: $('#add-form'), addBtn: $('#add-btn'), addInput: $('#add-input'),
       go: $('#go'), goLabel: $('#go-label'), miniGo: $('#mini-go'),
-      mute: $('#mute'), vol: $('#vol'), look: $('#look'), auto: $('#auto'), notify: $('#notify'),
+      mute: $('#mute'), vol: $('#vol'), look: $('#look'), notify: $('#notify'),
       seg: $('#seg'), buddySeg: $('#buddy-seg'),
       faceMain: $('#face-main'), faceSettings: $('#face-settings'), settingsBtn: $('#settings-btn'),
       today: $('#today'), tag: $('#tag'), hintBuddy: $('#hint-buddy'), install: $('#install'),
       nudge: $('#nudge'), nudgeUse: $('#nudge .nudge-ico use'), nudgeTitle: $('#nudge-title'), nudgeSub: $('#nudge-sub'),
       nudgeDone: $('#nudge-done'), nudgeLater: $('#nudge-later'), miniNudge: $('#mini-nudge'),
       floatBtn: $('#float-btn'), miniFloat: $('#mini-float'), miniBtn: $('#mini-btn'), miniExpand: $('#mini-expand'),
-      out: { focus: $('#out-focus'), short: $('#out-short'), long: $('#out-long'), every: $('#out-every'), water: $('#out-water'), stretch: $('#out-stretch') },
-      unit: { water: $('#unit-water'), stretch: $('#unit-stretch') },
+      out: { focus: $('#out-focus'), short: $('#out-short'), long: $('#out-long') },
       themeMeta: $('meta[name="theme-color"]'),
     });
 
@@ -565,23 +562,15 @@
     el.faceSettings.addEventListener('click', (e) => {
       const b = e.target.closest('.stepper button'); if (!b) return;
       const key = b.closest('.stepper').dataset.key, dir = +b.dataset.d;
-      if (key === 'water' || key === 'stretch') {
-        let i = NUDGE_STEPS.indexOf(S.settings[key]);
-        if (i < 0) i = Math.max(0, NUDGE_STEPS.findIndex((v) => v >= S.settings[key]));
-        S.settings[key] = NUDGE_STEPS[Math.max(0, Math.min(NUDGE_STEPS.length - 1, i + dir))];
-        if (activeNudge === key && !S.settings[key]) hideNudge();
-      } else {
-        const c = STEP[key];
-        let v = S.settings[key];
-        if (c.big > 1) v = dir > 0 ? (v < c.big ? v + 1 : v + c.big) : (v > c.big ? v - c.big : v - 1);
-        else v += dir;
-        S.settings[key] = Math.max(c.min, Math.min(c.max, v));
-        const t = S.timer;
-        if (key === t.phase && t.fresh && !t.running) setPhase(key);
-      }
+      const c = STEP[key];
+      let v = S.settings[key];
+      if (c.big > 1) v = dir > 0 ? (v < c.big ? v + 1 : v + c.big) : (v > c.big ? v - c.big : v - 1);
+      else v += dir;
+      S.settings[key] = Math.max(c.min, Math.min(c.max, v));
+      const t = S.timer;
+      if (key === t.phase && t.fresh && !t.running) setPhase(key);
       render(); save();
     });
-    el.auto.addEventListener('change', () => { S.settings.auto = el.auto.checked; save(); });
     el.notify.addEventListener('change', async () => {
       if (!el.notify.checked) { S.settings.notify = false; save(); return; }
       if (!('Notification' in window)) { el.notify.checked = false; say('no notifications in this browser', 2600); return; }
@@ -623,6 +612,7 @@
   function boot(data) {
     S = (data && data.state) ? merge(defaults(), data.state) : (load() || defaults());
     if (!S.timer.total) S.timer.total = dur(S.timer.phase);
+    S.settings.every = 4; S.settings.auto = false; // these no longer have settings, so keep the classic rhythm
     rollToday();
     bind();
     renderTasks();

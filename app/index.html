@@ -528,16 +528,6 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
         <div class="setting"><span>Long break</span>
           <div class="stepper" data-key="long"><button type="button" data-d="-1" aria-label="Shorter long break"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-long">15</output><button type="button" data-d="1" aria-label="Longer long break"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">min</span></div>
         </div>
-        <div class="setting"><span>Long break after</span>
-          <div class="stepper" data-key="every"><button type="button" data-d="-1" aria-label="Fewer sessions"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-every">4</output><button type="button" data-d="1" aria-label="More sessions"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit">focus</span></div>
-        </div>
-        <div class="setting"><span>Water nudge every</span>
-          <div class="stepper" data-key="water"><button type="button" data-d="-1" aria-label="Water nudges more often"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-water">45</output><button type="button" data-d="1" aria-label="Water nudges less often"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit" id="unit-water">min</span></div>
-        </div>
-        <div class="setting"><span>Stretch nudge every</span>
-          <div class="stepper" data-key="stretch"><button type="button" data-d="-1" aria-label="Stretch nudges more often"><svg aria-hidden="true"><use href="#i-minus"/></svg></button><output id="out-stretch">60</output><button type="button" data-d="1" aria-label="Stretch nudges less often"><svg aria-hidden="true"><use href="#i-plus"/></svg></button><span class="unit" id="unit-stretch">min</span></div>
-        </div>
-        <label class="switch-row" for="auto"><span>Start the next timer on its own</span><input class="switch" type="checkbox" id="auto"></label>
         <label class="switch-row" for="notify"><span>Desktop notifications</span><input class="switch" type="checkbox" id="notify"></label>
         <div class="setting"><span>Focus buddy</span>
           <div class="seg seg-sm" id="buddy-seg" role="radiogroup" aria-label="Focus buddy">
@@ -605,7 +595,7 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
     </div>
   </main>
 
-  <p class="hint"><kbd>Space</kbd> starts or pauses. The float button keeps <span id="hint-buddy">your cat</span> on top of every window in Chrome and Edge. Water and stretch nudges count while the timer runs.</p>
+  <p class="hint"><kbd>Space</kbd> starts or pauses. The float button keeps <span id="hint-buddy">your cat</span> on top of every window in Chrome and Edge. Every so often, it reminds you to sip water and stretch.</p>
 </div>
 
 <script src="app.js"></script>
