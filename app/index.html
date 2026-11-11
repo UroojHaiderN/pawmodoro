@@ -64,7 +64,7 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
   box-shadow:var(--card-shadow);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);
 }
 .card{
-  width:min(304px,100%);
+  width:min(340px,100%);
   border-radius:30px 24px 32px 22px / 24px 32px 22px 30px;
   padding:20px 20px 12px;
 }
@@ -142,7 +142,10 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 .dot:nth-child(even){transform:rotate(14deg) translateY(-1.5px)}
 
 /* tasks */
-.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:8.9rem;overflow-y:auto;scrollbar-width:thin}
+.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;max-height:8.9rem;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+.tasks::-webkit-scrollbar{width:6px}
+.tasks::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px}
+.tasks::-webkit-scrollbar-track{background:transparent}
 .task{
   display:flex;align-items:center;gap:8px;padding:5px 6px 5px 7px;
   border:1.6px solid var(--line);border-radius:14px 12px 15px 11px / 12px 15px 11px 14px;
@@ -226,8 +229,8 @@ kbd{font-family:var(--font-ui);font-size:.72rem;border:1.4px solid var(--line);b
 .seg button[aria-checked="true"]{background:var(--btn-bg);color:var(--btn-fg);text-shadow:none}
 
 /* color swatches */
-.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:8px 4px}
-.sw{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:3px 0;border-radius:12px;font-size:.64rem;color:var(--ink-soft)}
+.swatches{display:grid;grid-template-columns:repeat(4,1fr);gap:10px 4px}
+.sw{display:flex;flex-direction:column;align-items:center;gap:4px;border:0;background:none;padding:3px 0;border-radius:12px;font-size:.62rem;line-height:1.15;text-align:center;color:var(--ink-soft)}
 .sw-dot{position:relative;width:30px;height:30px;border-radius:50%;background:var(--sw-paper);border:2px solid var(--sw-ink);transition:transform .15s}
 .sw-dot::after{content:"";position:absolute;inset:8px;border-radius:50%;background:var(--sw-ink)}
 .sw:hover .sw-dot{transform:scale(1.08) rotate(-6deg)}
@@ -282,7 +285,7 @@ html.in-app,html.in-app body{background:transparent!important;height:auto;min-he
 .in-app .desk{display:block;min-height:0;padding:0;background:none;overflow:visible}
 .in-app .topbar,.in-app .hint,.in-app .doodles,.in-app .floating-note{display:none!important}
 .in-app .stage{display:inline-block;width:auto;padding:20px 18px 26px}
-.in-app .card{width:304px}
+.in-app .card{width:340px}
 .in-app .tape,.in-app .bunny-wrap,.in-app .time,.in-app .phase-row,.in-app .mini .bunny,.in-app .mini-time{cursor:grab}
 /* the Mac app paints real frosted glass behind the card, so the tint can be light */
 html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
@@ -542,14 +545,14 @@ html.in-app[data-look="glass"]{--paper:rgba(40,40,52,.16)}
         </div>
         <div class="setting stack"><span>Colors</span>
           <div class="swatches" id="seg" role="radiogroup" aria-label="Colors">
-            <button type="button" class="sw" role="radio" data-look="auto" title="Strawberry by day, Midnight at night" style="--sw-paper:linear-gradient(135deg,#FFE3EC 50%,#252B63 50%);--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">Auto</span></button>
-            <button type="button" class="sw" role="radio" data-look="strawberry" style="--sw-paper:#FFE3EC;--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">Strawberry</span></button>
-            <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">Matcha</span></button>
-            <button type="button" class="sw" role="radio" data-look="blueberry" style="--sw-paper:#E5EAFF;--sw-ink:#3B4CC0"><span class="sw-dot"></span><span class="sw-name">Blueberry</span></button>
-            <button type="button" class="sw" role="radio" data-look="lavender" style="--sw-paper:#EEE4FF;--sw-ink:#6A3FB5"><span class="sw-dot"></span><span class="sw-name">Taro</span></button>
-            <button type="button" class="sw" role="radio" data-look="peach" style="--sw-paper:#FFE7D5;--sw-ink:#B0462A"><span class="sw-dot"></span><span class="sw-name">Peach</span></button>
-            <button type="button" class="sw" role="radio" data-look="midnight" style="--sw-paper:#252B63;--sw-ink:#FFE7A8"><span class="sw-dot"></span><span class="sw-name">Midnight</span></button>
-            <button type="button" class="sw" role="radio" data-look="glass" style="--sw-paper:linear-gradient(135deg,#FF9DC0,#9A86C9 55%,#8FD8C8);--sw-ink:#FFFFFF"><span class="sw-dot"></span><span class="sw-name">Glass</span></button>
+            <button type="button" class="sw" role="radio" data-look="auto" title="Strawberry milk by day, Cherry cola at night" style="--sw-paper:linear-gradient(135deg,#FFE3EC 50%,#3E1520 50%);--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">auto</span></button>
+            <button type="button" class="sw" role="radio" data-look="strawberry" style="--sw-paper:#FFE3EC;--sw-ink:#C22A5E"><span class="sw-dot"></span><span class="sw-name">strawberry milk</span></button>
+            <button type="button" class="sw" role="radio" data-look="matcha" style="--sw-paper:#E6F3DA;--sw-ink:#366E3A"><span class="sw-dot"></span><span class="sw-name">matcha</span></button>
+            <button type="button" class="sw" role="radio" data-look="strawmatcha" style="--sw-paper:linear-gradient(180deg,#FFD6E3 50%,#BFE3B0 50%);--sw-ink:#346C38"><span class="sw-dot"></span><span class="sw-name">strawberry matcha</span></button>
+            <button type="button" class="sw" role="radio" data-look="ube" style="--sw-paper:#EEE3FA;--sw-ink:#5C2D91"><span class="sw-dot"></span><span class="sw-name">ube</span></button>
+            <button type="button" class="sw" role="radio" data-look="pistachio" style="--sw-paper:#EEF2D6;--sw-ink:#5C3A26"><span class="sw-dot"></span><span class="sw-name">pistachio</span></button>
+            <button type="button" class="sw" role="radio" data-look="cherry" style="--sw-paper:#3E1520;--sw-ink:#FFCDD6"><span class="sw-dot"></span><span class="sw-name">cherry cola</span></button>
+            <button type="button" class="sw" role="radio" data-look="glass" style="--sw-paper:linear-gradient(135deg,#FF9DC0,#9A86C9 55%,#8FD8C8);--sw-ink:#FFFFFF"><span class="sw-dot"></span><span class="sw-name">glass</span></button>
           </div>
         </div>
         <button class="go" id="settings-done" type="button">Done</button>
