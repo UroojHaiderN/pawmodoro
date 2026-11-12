@@ -83,3 +83,5 @@
 .prop-sushi{display:none}
 :root[data-look="sushi"] .prop-sushi{display:inline}
 :root[data-look="sushi"] .prop-matcha{display:none}
+/* on a break the friend is in the cat's paws, so it leaves the side */
+.bunny[data-state="break"] .friend{display:none}

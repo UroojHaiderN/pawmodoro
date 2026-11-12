@@ -161,7 +161,7 @@
     const t = S.timer; if (t.running) return;
     audio();
     if (t.remaining <= 0) t.remaining = t.total;
-    if (t.fresh) say(t.phase === 'focus' ? pick(MSG.start) : 'nap time', 1800);
+    if (t.fresh) say(t.phase === 'focus' ? pick(MSG.start) : 'snack break!', 1800);
     t.endAt = Date.now() + t.remaining; t.running = true; t.fresh = false;
     render(); save();
   }
